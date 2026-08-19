@@ -1,9 +1,10 @@
-import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { MapContainer, TileLayer, Polygon, Circle, Marker, Popup, ZoomControl } from 'react-leaflet';
+import { MapContainer, TileLayer, GeoJSON, Marker, Popup, ZoomControl } from 'react-leaflet';
 import L from 'leaflet';
 import { motion } from 'framer-motion';
 import { MapPin, ArrowRight } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { spatialApi } from '../../services/api';
 
 // Custom Map Marker Icons using SVG Data URIs
 const createCustomMarker = (colorHex) => {
@@ -11,271 +12,268 @@ const createCustomMarker = (colorHex) => {
   return L.divIcon({
     html: svg,
     className: 'custom-leaflet-marker transition-all duration-200',
-    iconSize: [32, 32],
-    iconAnchor: [16, 32],
-    popupAnchor: [0, -32],
+    iconSize: [30, 30],
+    iconAnchor: [15, 30],
+    popupAnchor: [0, -30],
   });
 };
 
 const greenMarker = createCustomMarker('#2E7D32');
 const blueMarker = createCustomMarker('#1565C0');
 const amberMarker = createCustomMarker('#F9A825');
-const tealMarker = createCustomMarker('#00796B');
 
-// Pringsewu Administrative Boundary Coordinates
-const pringsewuPolygon = [
-  [-5.2500, 104.8800],
-  [-5.2200, 105.0200],
-  [-5.3200, 105.0800],
-  [-5.4500, 105.0500],
-  [-5.4800, 104.9200],
-  [-5.3800, 104.8500],
-];
-
-// Mock Livestock Locations (6 Meaningful Points)
-const mockLocations = [
+const defaultMockLocations = [
   {
-    id: 1,
-    name: 'Peternakan Sapi Potong',
-    district: 'Kecamatan Pagelaran',
-    lat: -5.3620,
-    lng: 104.9580,
-    commodity: 'Sapi Potong',
-    count: '2.450 ekor',
-    icon: greenMarker,
+    id: '1',
+    farm_name: 'Peternakan Barokah Jaya',
+    district: 'Adiluwih',
+    village: 'Adiluwih',
+    category: 'Komersial',
+    scale: 'Besar',
+    total_population: 150,
+    coordinates: [105.0205381, -5.2269279],
   },
   {
-    id: 2,
-    name: 'Sentra Kambing Rambon',
-    district: 'Kecamatan Gadingrejo',
-    lat: -5.3500,
-    lng: 105.0120,
-    commodity: 'Kambing PE',
-    count: '5.820 ekor',
-    icon: blueMarker,
+    id: '2',
+    farm_name: 'Sentra Kambing Mandiri',
+    district: 'Gadingrejo',
+    village: 'Gadingrejo',
+    category: 'Mandiri',
+    scale: 'Sedang',
+    total_population: 85,
+    coordinates: [105.0120, -5.3500],
   },
   {
-    id: 3,
-    name: 'RPU Modern Ambarawa',
-    district: 'Kecamatan Ambarawa',
-    lat: -5.4120,
-    lng: 104.9650,
-    commodity: 'Ayam Broiler',
-    count: '12.000 ekor/hari',
-    icon: amberMarker,
+    id: '3',
+    farm_name: 'Kemitraan Broiler Sukoharjo',
+    district: 'Sukoharjo',
+    village: 'Sukoharjo III',
+    category: 'Kemitraan',
+    scale: 'Besar',
+    total_population: 12000,
+    coordinates: [104.9780, -5.2850],
   },
   {
-    id: 4,
-    name: 'Balai Pembibitan Ternak',
-    district: 'Kecamatan Sukoharjo',
-    lat: -5.2850,
-    lng: 104.9780,
-    commodity: 'Sapi & Kambing',
-    count: '1.200 ekor',
-    icon: greenMarker,
-  },
-  {
-    id: 5,
-    name: 'Peternakan Ayam Petelur',
-    district: 'Kecamatan Pringsewu Kota',
-    lat: -5.3650,
-    lng: 104.9750,
-    commodity: 'Ayam Petelur',
-    count: '8.500 ekor',
-    icon: amberMarker,
-  },
-  {
-    id: 6,
-    name: 'Sentra Ternak Domba',
-    district: 'Kecamatan Pardasuka',
-    lat: -5.4400,
-    lng: 104.9200,
-    commodity: 'Domba Garut',
-    count: '3.100 ekor',
-    icon: tealMarker,
+    id: '4',
+    farm_name: 'Peternakan Sapi Potong Pagelaran',
+    district: 'Pagelaran',
+    village: 'Pagelaran',
+    category: 'Komersial',
+    scale: 'Besar',
+    total_population: 60,
+    coordinates: [104.9580, -5.3620],
   },
 ];
 
 export default function InteractiveMapSection() {
-  return (
-    <section className="w-full py-24 md:py-32 bg-slate-50 text-slate-800">
+  // Fetch real GeoJSON districts boundaries
+  const { data: districtsGeoJSON } = useQuery({
+    queryKey: ['spatial', 'districts', 'home'],
+    queryFn: async () => {
+      const res = await spatialApi.getDistrictsGeoJSON();
+      return res;
+    },
+    staleTime: 1000 * 60 * 30,
+  });
 
+  // Fetch real GeoJSON farms
+  const { data: farmsGeoJSON } = useQuery({
+    queryKey: ['spatial', 'farms', 'home'],
+    queryFn: async () => {
+      const res = await spatialApi.getFarmsGeoJSON();
+      return res;
+    },
+    staleTime: 1000 * 60 * 10,
+  });
+
+  // Extract farm points from GeoJSON or fallback
+  const farmFeatures = farmsGeoJSON?.features && farmsGeoJSON.features.length > 0
+    ? farmsGeoJSON.features
+    : defaultMockLocations.map((loc) => ({
+        type: 'Feature',
+        id: loc.id,
+        geometry: {
+          type: 'Point',
+          coordinates: loc.coordinates,
+        },
+        properties: {
+          id: loc.id,
+          farm_name: loc.farm_name,
+          district: loc.district,
+          village: loc.village,
+          category: loc.category,
+          scale: loc.scale,
+          total_population: loc.total_population,
+        },
+      }));
+
+  return (
+    <section className="w-full py-20 md:py-28 bg-slate-50 text-slate-800">
       {/* Section Header */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 15 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.3 }}
-        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-        className="max-w-3xl mx-auto px-6 text-center space-y-3 mb-12 md:mb-16"
+        transition={{ duration: 0.5 }}
+        className="max-w-3xl mx-auto px-6 text-center space-y-2.5 mb-10"
       >
         <span className="text-xs font-semibold uppercase tracking-[0.2em] text-[#2E7D32] font-heading">
           Peta Interaktif
         </span>
-        <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold font-heading text-slate-900 tracking-tight">
-          Visualisasi Spasial Peternakan
+        <h2 className="text-3xl sm:text-4xl font-extrabold font-heading text-slate-900 tracking-tight">
+          Visualisasi Spasial Wilayah
         </h2>
-        <p className="text-base sm:text-lg text-slate-600 font-body leading-relaxed max-w-[65ch] mx-auto">
-          Eksplorasi sebaran populasi ternak, komoditas unggulan, dan fasilitas peternakan di Kabupaten Pringsewu secara real-time.
+        <p className="text-sm sm:text-base text-slate-600 font-body leading-relaxed max-w-[60ch] mx-auto">
+          Eksplorasi sebaran titik peternakan, zonasi komoditas, dan batas administratif 9 kecamatan di Kabupaten Pringsewu.
         </p>
       </motion.div>
 
       {/* Main Map Container */}
       <motion.div
-        initial={{ opacity: 0, y: 30 }}
+        initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.2 }}
-        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        transition={{ duration: 0.6 }}
         className="w-[92%] max-w-[1400px] mx-auto"
       >
-        <div className="relative h-[560px] md:h-[640px] rounded-[20px] overflow-hidden border border-slate-200/80 bg-white shadow-md">
-
+        <div className="relative h-[520px] md:h-[600px] rounded-2xl overflow-hidden border border-slate-200/90 bg-white shadow-sm">
           <MapContainer
             center={[-5.3582, 104.9749]}
             zoom={11}
             minZoom={9}
-            maxZoom={13}
+            maxZoom={14}
             zoomControl={false}
             scrollWheelZoom={false}
             className="w-full h-full z-10"
           >
             <ZoomControl position="topright" />
 
-            {/* Clean Light CartoDB Voyager Tile Layer */}
+            {/* Clean Voyager Basemap */}
             <TileLayer
               attribution='&copy; <a href="https://carto.com/">CARTO</a> & OpenStreetMap'
               url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
             />
 
-            {/* Administrative Boundary GeoJSON Polygon */}
-            <Polygon
-              positions={pringsewuPolygon}
-              pathOptions={{
-                color: '#2E7D32',
-                weight: 2,
-                dashArray: '5, 5',
-                fillColor: '#2E7D32',
-                fillOpacity: 0.08,
-              }}
-            />
+            {/* Render District Boundaries if available */}
+            {districtsGeoJSON && (
+              <GeoJSON
+                key={JSON.stringify(districtsGeoJSON)}
+                data={districtsGeoJSON}
+                style={() => ({
+                  color: '#2E7D32',
+                  weight: 1.5,
+                  fillColor: '#2E7D32',
+                  fillOpacity: 0.05,
+                  dashArray: '3, 4',
+                })}
+              />
+            )}
 
-            {/* Subtle Density Circles Overlay */}
-            <Circle
-              center={[-5.3620, 104.9580]}
-              radius={3800}
-              pathOptions={{
-                color: '#2E7D32',
-                fillColor: '#2E7D32',
-                fillOpacity: 0.15,
-                stroke: false,
-              }}
-            />
-            <Circle
-              center={[-5.3500, 105.0120]}
-              radius={4500}
-              pathOptions={{
-                color: '#1565C0',
-                fillColor: '#1565C0',
-                fillOpacity: 0.12,
-                stroke: false,
-              }}
-            />
+            {/* Render Farm Markers */}
+            {farmFeatures.map((feat) => {
+              const coords = feat.geometry?.coordinates; // [lng, lat]
+              if (!coords || coords.length < 2) return null;
+              const lat = coords[1];
+              const lng = coords[0];
+              const props = feat.properties || {};
 
-            {/* Interactive Location Markers */}
-            {mockLocations.map((loc) => (
-              <Marker key={loc.id} position={[loc.lat, loc.lng]} icon={loc.icon}>
-                <Popup className="custom-popup">
-                  <div className="p-4 min-w-[210px] space-y-2">
-                    <div>
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                        {loc.district}
-                      </span>
-                      <h4 className="text-sm font-extrabold text-slate-900 font-heading">
-                        {loc.name}
-                      </h4>
-                    </div>
+              const markerIcon =
+                props.scale === 'Besar'
+                  ? greenMarker
+                  : props.scale === 'Sedang'
+                  ? blueMarker
+                  : amberMarker;
 
-                    <div className="border-t border-slate-100 pt-2 space-y-1 text-xs">
-                      <div className="flex justify-between">
-                        <span className="text-slate-500">Komoditas:</span>
-                        <span className="font-semibold text-slate-800">{loc.commodity}</span>
+              return (
+                <Marker key={feat.id || props.id || `${lat}-${lng}`} position={[lat, lng]} icon={markerIcon}>
+                  <Popup className="custom-popup">
+                    <div className="p-4 min-w-[220px] space-y-2">
+                      <div>
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 font-heading">
+                          {props.district ? `Kecamatan ${props.district}` : 'Pringsewu'}
+                        </span>
+                        <h4 className="text-sm font-extrabold text-slate-900 font-heading leading-tight mt-0.5">
+                          {props.farm_name || 'Peternakan'}
+                        </h4>
                       </div>
-                      <div className="flex justify-between">
-                        <span className="text-slate-500">Populasi:</span>
-                        <span className="font-bold text-[#2E7D32]">{loc.count}</span>
+
+                      <div className="border-t border-slate-100 pt-2 space-y-1 text-xs">
+                        <div className="flex justify-between">
+                          <span className="text-slate-500">Kategori:</span>
+                          <span className="font-semibold text-slate-800">{props.category || '-'}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-slate-500">Skala:</span>
+                          <span className="font-semibold text-slate-800">{props.scale || '-'}</span>
+                        </div>
+                        {props.total_population !== undefined && (
+                          <div className="flex justify-between">
+                            <span className="text-slate-500">Populasi:</span>
+                            <span className="font-bold text-[#2E7D32]">
+                              {props.total_population.toLocaleString('id-ID')} ekor
+                            </span>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="pt-1">
+                        <Link
+                          to={`/spasial?id=${props.id}`}
+                          className="w-full inline-flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-[#2E7D32] text-white hover:bg-[#236327] transition-colors"
+                        >
+                          <span>Buka di WebGIS</span>
+                          <ArrowRight className="w-3 h-3" />
+                        </Link>
                       </div>
                     </div>
-
-                    <div className="pt-2">
-                      <Link
-                        to="/spasial"
-                        className="w-full inline-flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded bg-[#2E7D32] text-white hover:bg-[#236327] transition-colors"
-                      >
-                        <span>Lihat Detail</span>
-                        <ArrowRight className="w-3 h-3" />
-                      </Link>
-                    </div>
-                  </div>
-                </Popup>
-              </Marker>
-            ))}
+                  </Popup>
+                </Marker>
+              );
+            })}
           </MapContainer>
 
-          {/* Minimal Floating Overlays */}
-
-          {/* Top Left Floating Tag */}
-          <div className="absolute top-4 left-4 z-20 bg-white/90 backdrop-blur-md px-3.5 py-2 rounded-xl border border-slate-200/80 shadow-xs flex items-center gap-2 pointer-events-none text-xs font-medium text-slate-800">
+          {/* Top Left Status Badge */}
+          <div className="absolute top-4 left-4 z-20 bg-white/95 backdrop-blur-md px-3.5 py-2 rounded-xl border border-slate-200/80 shadow-xs flex items-center gap-2 text-xs font-medium text-slate-800 pointer-events-none">
             <span className="w-2 h-2 rounded-full bg-[#2E7D32]" />
             <span className="font-semibold font-heading">Kabupaten Pringsewu</span>
-            <span className="text-slate-400">|</span>
-            <span className="text-slate-500">Live Preview</span>
+            <span className="text-slate-300">|</span>
+            <span className="text-slate-500">{farmFeatures.length} Titik Terdata</span>
           </div>
 
-          {/* Top Right Data Indicator */}
-          <div className="absolute top-4 right-14 z-20 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-lg border border-slate-200/80 shadow-xs hidden sm:flex items-center gap-1.5 text-xs font-medium text-slate-600 pointer-events-none">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
-            <span>6 Titik Terdata</span>
-          </div>
-
-          {/* Bottom Left Simple Map Legend */}
-          <div className="absolute bottom-4 left-4 z-20 bg-white/90 backdrop-blur-md px-3.5 py-2.5 rounded-xl border border-slate-200/80 shadow-xs text-xs font-medium text-slate-700 hidden sm:flex items-center gap-4 pointer-events-none">
+          {/* Bottom Left Minimal Legend */}
+          <div className="absolute bottom-4 left-4 z-20 bg-white/95 backdrop-blur-md px-3.5 py-2.5 rounded-xl border border-slate-200/80 shadow-xs text-xs font-medium text-slate-700 hidden sm:flex items-center gap-4">
             <div className="flex items-center gap-1.5">
               <span className="w-2.5 h-2.5 rounded-full bg-[#2E7D32]" />
-              <span>Sapi</span>
+              <span>Skala Besar</span>
             </div>
             <div className="flex items-center gap-1.5">
               <span className="w-2.5 h-2.5 rounded-full bg-[#1565C0]" />
-              <span>Kambing</span>
+              <span>Skala Sedang</span>
             </div>
             <div className="flex items-center gap-1.5">
               <span className="w-2.5 h-2.5 rounded-full bg-[#F9A825]" />
-              <span>Unggas</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#00796B]" />
-              <span>Domba</span>
+              <span>Skala Kecil/Mikro</span>
             </div>
           </div>
-
         </div>
       </motion.div>
 
-      {/* Single CTA Below Map */}
+      {/* Single Primary Action Below Map */}
       <motion.div
-        initial={{ opacity: 0, y: 15 }}
+        initial={{ opacity: 0, y: 10 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.5 }}
-        transition={{ duration: 0.5, delay: 0.2 }}
-        className="mt-10 text-center"
+        transition={{ duration: 0.4 }}
+        className="mt-8 text-center"
       >
         <Link
           to="/spasial"
-          className="inline-flex items-center gap-2 px-8 py-4 text-base font-semibold rounded-lg bg-[#2E7D32] hover:bg-[#236327] active:scale-[0.98] text-white shadow-lg shadow-emerald-950/10 transition-all duration-200"
+          className="inline-flex items-center gap-2 px-7 py-3.5 text-sm font-semibold rounded-lg bg-[#2E7D32] hover:bg-[#236327] active:scale-[0.98] text-white shadow-md transition-all duration-200"
         >
-          <MapPin className="w-5 h-5" />
-          <span>Eksplorasi WebGIS</span>
+          <MapPin className="w-4 h-4" />
+          <span>Eksplorasi WebGIS Lengkap</span>
         </Link>
       </motion.div>
-
     </section>
   );
 }

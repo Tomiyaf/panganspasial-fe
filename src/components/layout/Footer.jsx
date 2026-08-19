@@ -17,7 +17,7 @@ export default function Footer() {
     { name: 'Regional Statistics', path: '/statistik' },
     { name: 'Spatial Decision Support', path: '/rekomendasi' },
     { name: 'Data Sources', path: '/tentang' },
-    { name: 'Documentation', path: '/tentang' },
+    { name: 'Admin Portal', path: '/admin/login' },
   ];
 
   return (
