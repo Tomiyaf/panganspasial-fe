@@ -34,23 +34,21 @@ export default function SpatialFilters({
     name: f.properties?.name || f.properties?.village_name || 'Pekon/Desa',
   })) || [];
 
+  if (!isOpen) return null;
+
   return (
-    <div
-      className={`fixed inset-y-0 left-0 z-[900] w-full sm:w-80 bg-white border-r border-slate-200/90 shadow-2xl flex flex-col font-body transition-transform duration-300 ${
-        isOpen ? 'translate-x-0' : '-translate-x-full'
-      }`}
-    >
+    <div className="absolute top-12 left-0 w-80 sm:w-96 max-h-[calc(100vh-170px)] bg-white rounded-3xl border border-[#C2C9BD]/50 shadow-2xl flex flex-col font-body z-50 animate-in fade-in zoom-in-95 duration-150 overflow-hidden">
       {/* Top Header */}
-      <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/70">
-        <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-[#2E7D32] text-white flex items-center justify-center">
-            <Filter className="w-3.5 h-3.5" />
+      <div className="px-6 py-4 border-b border-[#E2E8E2] flex items-center justify-between bg-[#F1F5F1] shrink-0">
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-full bg-[#E8F5E9] text-[#2E7D32] flex items-center justify-center shadow-2xs">
+            <Filter className="w-4 h-4" />
           </div>
           <div>
-            <h3 className="text-sm font-bold font-heading text-slate-900">
+            <h3 className="text-sm font-bold font-heading text-[#191C19]">
               Filter Spasial
             </h3>
-            <span className="text-[11px] text-slate-500">
+            <span className="text-[11px] text-[#495348] font-medium">
               {totalResults} titik terdata
             </span>
           </div>
@@ -58,35 +56,35 @@ export default function SpatialFilters({
 
         <button
           onClick={onClose}
-          className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition-colors"
+          className="p-1.5 rounded-full text-[#495348] hover:text-[#191C19] hover:bg-[#E8EFE8] transition-colors"
           aria-label="Tutup filter"
         >
           <X className="w-5 h-5" />
         </button>
       </div>
 
-      {/* Filter Form Controls */}
-      <div className="flex-1 overflow-y-auto p-5 space-y-4 text-xs">
+      {/* Filter Form Controls - MD3 Outlined Inputs */}
+      <div className="flex-1 overflow-y-auto p-6 space-y-4 text-xs">
         {/* Search Query */}
         <div className="space-y-1.5">
-          <label className="font-semibold text-slate-700 block">
+          <label className="font-bold text-[#191C19] block font-heading">
             Cari Peternakan / Pemilik
           </label>
           <div className="relative">
-            <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+            <Search className="w-4 h-4 text-[#495348] absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               value={filters.search || ''}
               onChange={(e) => onFilterChange('search', e.target.value)}
               placeholder="Nama peternakan / pemilik..."
-              className="w-full pl-8 pr-3 py-2 text-xs bg-slate-50 rounded-lg border border-slate-200 text-slate-800 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#2E7D32] focus:border-[#2E7D32]"
+              className="w-full pl-10 pr-3.5 py-2.5 text-xs bg-[#F1F5F1]/50 rounded-xl border border-[#C2C9BD] text-[#191C19] placeholder:text-[#495348]/60 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#2E7D32] focus:border-[#2E7D32] transition-all"
             />
           </div>
         </div>
 
         {/* District Filter */}
         <div className="space-y-1.5">
-          <label className="font-semibold text-slate-700 block">
+          <label className="font-bold text-[#191C19] block font-heading">
             Kecamatan
           </label>
           <select
@@ -95,7 +93,7 @@ export default function SpatialFilters({
               onFilterChange('district_id', e.target.value);
               onFilterChange('village_id', ''); // Reset village
             }}
-            className="w-full px-3 py-2 text-xs bg-slate-50 rounded-lg border border-slate-200 text-slate-800 focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#2E7D32]"
+            className="w-full px-3.5 py-2.5 text-xs bg-[#F1F5F1]/50 rounded-xl border border-[#C2C9BD] text-[#191C19] font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#2E7D32] focus:border-[#2E7D32] transition-all cursor-pointer"
           >
             <option value="">Semua Kecamatan (9)</option>
             {districtList.map((d) => (
@@ -109,13 +107,13 @@ export default function SpatialFilters({
         {/* Village / Pekon Filter (Cascading) */}
         {filters.district_id && villageList.length > 0 && (
           <div className="space-y-1.5">
-            <label className="font-semibold text-slate-700 block">
+            <label className="font-bold text-[#191C19] block font-heading">
               Desa / Pekon
             </label>
             <select
               value={filters.village_id || ''}
               onChange={(e) => onFilterChange('village_id', e.target.value)}
-              className="w-full px-3 py-2 text-xs bg-slate-50 rounded-lg border border-slate-200 text-slate-800 focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#2E7D32]"
+              className="w-full px-3.5 py-2.5 text-xs bg-[#F1F5F1]/50 rounded-xl border border-[#C2C9BD] text-[#191C19] font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#2E7D32] focus:border-[#2E7D32] transition-all cursor-pointer"
             >
               <option value="">Semua Desa / Pekon</option>
               {villageList.map((v) => (
@@ -129,13 +127,13 @@ export default function SpatialFilters({
 
         {/* Farm Category */}
         <div className="space-y-1.5">
-          <label className="font-semibold text-slate-700 block">
+          <label className="font-bold text-[#191C19] block font-heading">
             Kategori Peternakan
           </label>
           <select
             value={filters.farm_category_id || ''}
             onChange={(e) => onFilterChange('farm_category_id', e.target.value)}
-            className="w-full px-3 py-2 text-xs bg-slate-50 rounded-lg border border-slate-200 text-slate-800 focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#2E7D32]"
+            className="w-full px-3.5 py-2.5 text-xs bg-[#F1F5F1]/50 rounded-xl border border-[#C2C9BD] text-[#191C19] font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#2E7D32] focus:border-[#2E7D32] transition-all cursor-pointer"
           >
             <option value="">Semua Kategori</option>
             {categories.map((c) => (
@@ -148,13 +146,13 @@ export default function SpatialFilters({
 
         {/* Farm Scale */}
         <div className="space-y-1.5">
-          <label className="font-semibold text-slate-700 block">
+          <label className="font-bold text-[#191C19] block font-heading">
             Skala Usaha
           </label>
           <select
             value={filters.farm_scale_id || ''}
             onChange={(e) => onFilterChange('farm_scale_id', e.target.value)}
-            className="w-full px-3 py-2 text-xs bg-slate-50 rounded-lg border border-slate-200 text-slate-800 focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#2E7D32]"
+            className="w-full px-3.5 py-2.5 text-xs bg-[#F1F5F1]/50 rounded-xl border border-[#C2C9BD] text-[#191C19] font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#2E7D32] focus:border-[#2E7D32] transition-all cursor-pointer"
           >
             <option value="">Semua Skala Usaha</option>
             {scales.map((s) => (
@@ -167,7 +165,7 @@ export default function SpatialFilters({
 
         {/* Livestock Category Taxonomy */}
         <div className="space-y-1.5">
-          <label className="font-semibold text-slate-700 block">
+          <label className="font-bold text-[#191C19] block font-heading">
             Kategori Komoditas
           </label>
           <select
@@ -176,7 +174,7 @@ export default function SpatialFilters({
               onFilterChange('livestock_category_id', e.target.value);
               onFilterChange('livestock_type_id', '');
             }}
-            className="w-full px-3 py-2 text-xs bg-slate-50 rounded-lg border border-slate-200 text-slate-800 focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#2E7D32]"
+            className="w-full px-3.5 py-2.5 text-xs bg-[#F1F5F1]/50 rounded-xl border border-[#C2C9BD] text-[#191C19] font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#2E7D32] focus:border-[#2E7D32] transition-all cursor-pointer"
           >
             <option value="">Semua Kategori Ternak</option>
             {livestockCategories.map((lc) => (
@@ -189,13 +187,13 @@ export default function SpatialFilters({
 
         {/* Livestock Type */}
         <div className="space-y-1.5">
-          <label className="font-semibold text-slate-700 block">
+          <label className="font-bold text-[#191C19] block font-heading">
             Jenis Ternak
           </label>
           <select
             value={filters.livestock_type_id || ''}
             onChange={(e) => onFilterChange('livestock_type_id', e.target.value)}
-            className="w-full px-3 py-2 text-xs bg-slate-50 rounded-lg border border-slate-200 text-slate-800 focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#2E7D32]"
+            className="w-full px-3.5 py-2.5 text-xs bg-[#F1F5F1]/50 rounded-xl border border-[#C2C9BD] text-[#191C19] font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#2E7D32] focus:border-[#2E7D32] transition-all cursor-pointer"
           >
             <option value="">Semua Jenis Ternak</option>
             {livestockTypes.map((lt) => (
@@ -207,12 +205,12 @@ export default function SpatialFilters({
         </div>
       </div>
 
-      {/* Footer Reset Action */}
-      <div className="p-4 border-t border-slate-100 bg-slate-50/50">
+      {/* Footer Reset Action - MD3 Pill */}
+      <div className="p-4 border-t border-[#E2E8E2] bg-[#F1F5F1]/50 shrink-0">
         <button
           type="button"
           onClick={onResetFilters}
-          className="w-full flex items-center justify-center gap-1.5 py-2 px-4 rounded-lg border border-slate-200 text-slate-700 hover:bg-white text-xs font-semibold font-heading transition-colors"
+          className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-full border border-[#C2C9BD] text-[#495348] hover:bg-white text-xs font-bold font-heading transition-colors"
         >
           <RotateCcw className="w-3.5 h-3.5" />
           <span>Reset Semua Filter</span>

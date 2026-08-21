@@ -18,7 +18,7 @@ export default function SpatialLayerControl({
     <div className="relative">
       <button
         onClick={onToggleOpen}
-        className="flex items-center gap-2 px-3 py-2 bg-white/95 backdrop-blur-md rounded-xl border border-slate-200/90 shadow-md text-xs font-semibold font-heading text-slate-800 hover:bg-slate-50 transition-colors"
+        className="flex items-center gap-2 px-4 py-2.5 bg-white/95 backdrop-blur-md rounded-full border border-[#C2C9BD]/70 shadow-sm text-xs font-bold font-heading text-[#191C19] hover:bg-[#F1F5F1] transition-all"
         aria-label="Layer Switcher"
       >
         <Layers className="w-4 h-4 text-[#2E7D32]" />
@@ -26,58 +26,58 @@ export default function SpatialLayerControl({
       </button>
 
       {isOpen && (
-        <div className="absolute top-11 right-0 w-64 bg-white rounded-2xl border border-slate-200 shadow-xl p-4 space-y-4 z-50 text-xs font-body animate-in fade-in zoom-in-95 duration-150">
+        <div className="absolute top-12 right-0 w-72 bg-white rounded-3xl border border-[#C2C9BD]/50 shadow-xl p-5 space-y-4 z-50 text-xs font-body animate-in fade-in zoom-in-95 duration-150">
           {/* Overlays Section */}
           <div className="space-y-2">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 font-heading block">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-[#495348] font-heading block">
               Layer Spasial (Overlays)
             </span>
-            <div className="space-y-1.5">
-              <label className="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors">
-                <span className="font-medium text-slate-700">Titik Peternakan</span>
+            <div className="space-y-1">
+              <label className="flex items-center justify-between p-2.5 rounded-xl hover:bg-[#F1F5F1] cursor-pointer transition-colors">
+                <span className="font-semibold text-[#191C19]">Titik Peternakan</span>
                 <input
                   type="checkbox"
                   checked={layers.farms}
                   onChange={() => onToggleLayer('farms')}
-                  className="rounded border-slate-300 text-[#2E7D32] focus:ring-[#2E7D32] w-4 h-4"
+                  className="rounded border-[#C2C9BD] text-[#2E7D32] focus:ring-[#2E7D32] w-4 h-4"
                 />
               </label>
 
-              <label className="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors">
-                <span className="font-medium text-slate-700">Batas Wilayah Kecamatan</span>
+              <label className="flex items-center justify-between p-2.5 rounded-xl hover:bg-[#F1F5F1] cursor-pointer transition-colors">
+                <span className="font-semibold text-[#191C19]">Batas Wilayah Kecamatan</span>
                 <input
                   type="checkbox"
                   checked={layers.districts}
                   onChange={() => onToggleLayer('districts')}
-                  className="rounded border-slate-300 text-[#2E7D32] focus:ring-[#2E7D32] w-4 h-4"
+                  className="rounded border-[#C2C9BD] text-[#2E7D32] focus:ring-[#2E7D32] w-4 h-4"
                 />
               </label>
 
-              <label className="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors">
-                <span className="font-medium text-slate-700">Heatmap Kepadatan Ternak</span>
+              <label className="flex items-center justify-between p-2.5 rounded-xl hover:bg-[#F1F5F1] cursor-pointer transition-colors">
+                <span className="font-semibold text-[#191C19]">Heatmap Kepadatan Ternak</span>
                 <input
                   type="checkbox"
                   checked={layers.heatmap}
                   onChange={() => onToggleLayer('heatmap')}
-                  className="rounded border-slate-300 text-[#2E7D32] focus:ring-[#2E7D32] w-4 h-4"
+                  className="rounded border-[#C2C9BD] text-[#2E7D32] focus:ring-[#2E7D32] w-4 h-4"
                 />
               </label>
             </div>
           </div>
 
           {/* Basemap Selection */}
-          <div className="space-y-2 pt-2 border-t border-slate-100">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 font-heading block">
+          <div className="space-y-2 pt-3 border-t border-[#E2E8E2]">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-[#495348] font-heading block">
               Peta Dasar (Basemap)
             </span>
             <div className="space-y-1">
               {basemaps.map((b) => (
                 <label
                   key={b.id}
-                  className={`flex items-center justify-between p-2 rounded-lg cursor-pointer transition-colors ${
+                  className={`flex items-center justify-between p-2.5 rounded-xl cursor-pointer transition-colors ${
                     activeBasemap === b.id
-                      ? 'bg-emerald-50 text-[#2E7D32] font-semibold'
-                      : 'hover:bg-slate-50 text-slate-700'
+                      ? 'bg-[#E8F5E9] text-[#1B5E20] font-bold'
+                      : 'hover:bg-[#F1F5F1] text-[#495348]'
                   }`}
                 >
                   <span>{b.name}</span>
@@ -87,7 +87,7 @@ export default function SpatialLayerControl({
                     value={b.id}
                     checked={activeBasemap === b.id}
                     onChange={() => onChangeBasemap(b.id)}
-                    className="text-[#2E7D32] focus:ring-[#2E7D32] w-3.5 h-3.5"
+                    className="text-[#2E7D32] focus:ring-[#2E7D32] w-4 h-4"
                   />
                 </label>
               ))}

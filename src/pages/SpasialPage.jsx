@@ -142,32 +142,42 @@ export default function SpasialPage() {
   };
 
   return (
-    <div className="relative w-full h-[100dvh] overflow-hidden bg-slate-100 flex flex-col pt-20">
-      {/* Top Floating Control Bar */}
+    <div className="relative w-full h-[100dvh] overflow-hidden bg-[#F8FAF8] flex flex-col pt-20">
+      {/* Top Floating Control Bar - MD3 Pill Action Bar */}
       <div className="absolute top-24 left-4 right-4 z-[800] flex items-center justify-between pointer-events-none">
         
         {/* Left Side: Filter Trigger & Quick Stats */}
-        <div className="flex items-center gap-2 pointer-events-auto">
+        <div className="flex items-center gap-2.5 pointer-events-auto relative">
           <button
             onClick={() => setFilterDrawerOpen(!filterDrawerOpen)}
-            className="flex items-center gap-2 px-3.5 py-2.5 bg-white/95 backdrop-blur-md rounded-xl border border-slate-200/90 shadow-md text-xs font-semibold font-heading text-slate-800 hover:bg-slate-50 transition-colors"
+            className="flex items-center gap-2 px-5 py-2.5 bg-white/95 backdrop-blur-md rounded-full border border-[#C2C9BD]/70 shadow-sm text-xs font-bold font-heading text-[#191C19] hover:bg-[#F1F5F1] transition-all duration-150"
           >
             <Filter className="w-4 h-4 text-[#2E7D32]" />
             <span>Filter Spasial</span>
             {Object.values(filters).some(Boolean) && (
-              <span className="w-2 h-2 rounded-full bg-emerald-500" />
+              <span className="w-2.5 h-2.5 rounded-full bg-[#2E7D32]" />
             )}
           </button>
 
-          <div className="hidden md:flex items-center gap-2 px-3.5 py-2.5 bg-white/95 backdrop-blur-md rounded-xl border border-slate-200/90 shadow-md text-xs font-medium text-slate-700">
-            <span className="w-2 h-2 rounded-full bg-[#2E7D32]" />
-            <span className="font-semibold">{farmFeatures.length}</span>
-            <span className="text-slate-500">Titik Terpetakan</span>
+          <div className="hidden md:flex items-center gap-2 px-4 py-2.5 bg-white/95 backdrop-blur-md rounded-full border border-[#C2C9BD]/70 shadow-sm text-xs font-medium text-[#191C19]">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#2E7D32]" />
+            <span className="font-bold font-heading">{farmFeatures.length}</span>
+            <span className="text-[#495348] font-semibold">Titik Terpetakan</span>
           </div>
+
+          {/* Floating Filter Modal Panel - Dropdown attached to map control bar */}
+          <SpatialFilters
+            filters={filters}
+            onFilterChange={handleFilterChange}
+            onResetFilters={handleResetFilters}
+            isOpen={filterDrawerOpen}
+            onClose={() => setFilterDrawerOpen(false)}
+            totalResults={farmFeatures.length}
+          />
         </div>
 
         {/* Right Side: Layer Switcher & Reset Map Button */}
-        <div className="flex items-center gap-2 pointer-events-auto">
+        <div className="flex items-center gap-2.5 pointer-events-auto">
           <SpatialLayerControl
             layers={activeLayers}
             onToggleLayer={(layerName) =>
@@ -180,10 +190,10 @@ export default function SpasialPage() {
           />
 
           <button
-            onClick={() => setTargetLocation([-5.3582, 104.9749])}
-            className="p-2.5 bg-white/95 backdrop-blur-md rounded-xl border border-slate-200/90 shadow-md text-slate-700 hover:bg-slate-50 transition-colors"
-            title="Reset Peta Pringsewu"
-            aria-label="Reset Tampilan Peta"
+            onClick={() => setTargetLocation([-5.2480, 105.0150])}
+            className="w-10 h-10 rounded-full bg-white/95 backdrop-blur-md border border-[#C2C9BD]/70 shadow-sm text-[#495348] hover:text-[#2E7D32] hover:bg-[#F1F5F1] flex items-center justify-center transition-colors"
+            title="Reset Peta (Fokus Kec. Adiluwih)"
+            aria-label="Reset Tampilan Peta ke Kecamatan Adiluwih"
           >
             <RotateCcw className="w-4 h-4" />
           </button>
@@ -194,8 +204,9 @@ export default function SpasialPage() {
       {/* Main Full-Screen Map Container */}
       <div className="w-full h-full relative z-0">
         <MapContainer
-          center={[-5.3582, 104.9749]}
-          zoom={11}
+          center={[-5.2480, 105.0150]}
+          zoom={12.8}
+          zoomSnap={0.2}
           minZoom={9}
           maxZoom={17}
           zoomControl={false}
@@ -226,7 +237,7 @@ export default function SpasialPage() {
               onEachFeature={(feature, layer) => {
                 const name = feature.properties?.name || feature.properties?.district_name || 'Kecamatan';
                 layer.bindTooltip(
-                  `<div class="text-xs font-bold font-heading text-slate-800">Kecamatan ${name}</div>`,
+                  `<div class="text-xs font-bold font-heading text-[#191C19]">Kecamatan ${name}</div>`,
                   { sticky: true, className: 'custom-leaflet-tooltip' }
                 );
               }}
@@ -264,32 +275,32 @@ export default function SpasialPage() {
                   }}
                 >
                   <Popup className="custom-popup">
-                    <div className="p-4 min-w-[220px] space-y-2">
+                    <div className="p-4 min-w-[230px] space-y-2.5 font-body">
                       <div>
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 font-heading">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-[#495348] font-heading">
                           {props.district ? `Kec. ${props.district}` : 'Pringsewu'}
                         </span>
-                        <h4 className="text-sm font-extrabold text-slate-900 font-heading leading-tight">
+                        <h4 className="text-sm font-extrabold text-[#191C19] font-heading leading-tight">
                           {props.farm_name || 'Peternakan'}
                         </h4>
                       </div>
 
-                      <div className="border-t border-slate-100 pt-2 space-y-1 text-xs">
+                      <div className="border-t border-[#E2E8E2] pt-2 space-y-1 text-xs">
                         <div className="flex justify-between">
-                          <span className="text-slate-500">Pemilik:</span>
-                          <span className="font-semibold text-slate-800">{props.owner_name || '-'}</span>
+                          <span className="text-[#495348]">Pemilik:</span>
+                          <span className="font-semibold text-[#191C19]">{props.owner_name || '-'}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-slate-500">Kategori:</span>
-                          <span className="font-semibold text-slate-800">{props.category || '-'}</span>
+                          <span className="text-[#495348]">Kategori:</span>
+                          <span className="font-semibold text-[#191C19]">{props.category || '-'}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-slate-500">Skala:</span>
-                          <span className="font-semibold text-slate-800">{props.scale || '-'}</span>
+                          <span className="text-[#495348]">Skala:</span>
+                          <span className="font-semibold text-[#191C19]">{props.scale || '-'}</span>
                         </div>
                         {props.total_population !== undefined && (
                           <div className="flex justify-between">
-                            <span className="text-slate-500">Populasi:</span>
+                            <span className="text-[#495348]">Populasi:</span>
                             <span className="font-bold text-[#2E7D32]">
                               {props.total_population.toLocaleString('id-ID')} ekor
                             </span>
@@ -301,7 +312,7 @@ export default function SpasialPage() {
                         <button
                           type="button"
                           onClick={() => handleSelectFarm(props.id, lat, lng)}
-                          className="w-full inline-flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-[#2E7D32] text-white hover:bg-[#236327] transition-colors"
+                          className="w-full inline-flex items-center justify-center gap-1.5 px-4 py-2 text-xs font-bold font-heading rounded-full bg-[#2E7D32] text-white hover:bg-[#1B5E20] transition-colors shadow-2xs"
                         >
                           <span>Buka Detail Lengkap</span>
                           <ArrowRight className="w-3 h-3" />
@@ -314,16 +325,6 @@ export default function SpasialPage() {
             })}
         </MapContainer>
       </div>
-
-      {/* Floating Filter Sidebar Drawer */}
-      <SpatialFilters
-        filters={filters}
-        onFilterChange={handleFilterChange}
-        onResetFilters={handleResetFilters}
-        isOpen={filterDrawerOpen}
-        onClose={() => setFilterDrawerOpen(false)}
-        totalResults={farmFeatures.length}
-      />
 
       {/* Farm Detail Modal/Drawer */}
       {selectedFarmId && (
