@@ -108,7 +108,7 @@ export default function InteractiveMapSection() {
       }));
 
   return (
-    <section className="w-full py-20 md:py-28 bg-slate-50 text-slate-800">
+    <section className="w-full py-20 md:py-28 bg-[#F8FAF8] text-[#191C19]">
       {/* Section Header */}
       <motion.div
         initial={{ opacity: 0, y: 15 }}
@@ -117,13 +117,13 @@ export default function InteractiveMapSection() {
         transition={{ duration: 0.5 }}
         className="max-w-3xl mx-auto px-6 text-center space-y-2.5 mb-10"
       >
-        <span className="text-xs font-semibold uppercase tracking-[0.2em] text-[#2E7D32] font-heading">
+        <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#2E7D32] font-heading">
           Peta Interaktif
         </span>
-        <h2 className="text-3xl sm:text-4xl font-extrabold font-heading text-slate-900 tracking-tight">
+        <h2 className="text-3xl sm:text-4xl font-extrabold font-heading text-[#191C19] tracking-tight">
           Visualisasi Spasial Wilayah
         </h2>
-        <p className="text-sm sm:text-base text-slate-600 font-body leading-relaxed max-w-[60ch] mx-auto">
+        <p className="text-sm sm:text-base text-[#495348] font-body leading-relaxed max-w-[60ch] mx-auto">
           Eksplorasi sebaran titik peternakan, zonasi komoditas, dan batas administratif 9 kecamatan di Kabupaten Pringsewu.
         </p>
       </motion.div>
@@ -136,12 +136,13 @@ export default function InteractiveMapSection() {
         transition={{ duration: 0.6 }}
         className="w-[92%] max-w-[1400px] mx-auto"
       >
-        <div className="relative h-[520px] md:h-[600px] rounded-2xl overflow-hidden border border-slate-200/90 bg-white shadow-sm">
+        <div className="relative h-[520px] md:h-[600px] rounded-3xl overflow-hidden border border-[#C2C9BD]/50 bg-white shadow-sm">
           <MapContainer
-            center={[-5.3582, 104.9749]}
-            zoom={11}
+            center={[-5.2480, 105.0150]}
+            zoom={12.8}
+            zoomSnap={0.2}
             minZoom={9}
-            maxZoom={14}
+            maxZoom={17}
             zoomControl={false}
             scrollWheelZoom={false}
             className="w-full h-full z-10"
@@ -187,28 +188,28 @@ export default function InteractiveMapSection() {
               return (
                 <Marker key={feat.id || props.id || `${lat}-${lng}`} position={[lat, lng]} icon={markerIcon}>
                   <Popup className="custom-popup">
-                    <div className="p-4 min-w-[220px] space-y-2">
+                    <div className="p-4 min-w-[230px] space-y-2.5 font-body">
                       <div>
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 font-heading">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-[#495348] font-heading">
                           {props.district ? `Kecamatan ${props.district}` : 'Pringsewu'}
                         </span>
-                        <h4 className="text-sm font-extrabold text-slate-900 font-heading leading-tight mt-0.5">
+                        <h4 className="text-sm font-extrabold text-[#191C19] font-heading leading-tight mt-0.5">
                           {props.farm_name || 'Peternakan'}
                         </h4>
                       </div>
 
-                      <div className="border-t border-slate-100 pt-2 space-y-1 text-xs">
+                      <div className="border-t border-[#E2E8E2] pt-2 space-y-1 text-xs">
                         <div className="flex justify-between">
-                          <span className="text-slate-500">Kategori:</span>
-                          <span className="font-semibold text-slate-800">{props.category || '-'}</span>
+                          <span className="text-[#495348]">Kategori:</span>
+                          <span className="font-semibold text-[#191C19]">{props.category || '-'}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-slate-500">Skala:</span>
-                          <span className="font-semibold text-slate-800">{props.scale || '-'}</span>
+                          <span className="text-[#495348]">Skala:</span>
+                          <span className="font-semibold text-[#191C19]">{props.scale || '-'}</span>
                         </div>
                         {props.total_population !== undefined && (
                           <div className="flex justify-between">
-                            <span className="text-slate-500">Populasi:</span>
+                            <span className="text-[#495348]">Populasi:</span>
                             <span className="font-bold text-[#2E7D32]">
                               {props.total_population.toLocaleString('id-ID')} ekor
                             </span>
@@ -216,10 +217,10 @@ export default function InteractiveMapSection() {
                         )}
                       </div>
 
-                      <div className="pt-1">
+                      <div className="pt-1.5">
                         <Link
                           to={`/spasial?id=${props.id}`}
-                          className="w-full inline-flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-[#2E7D32] text-white hover:bg-[#236327] transition-colors"
+                          className="w-full inline-flex items-center justify-center gap-1.5 px-4 py-2 text-xs font-bold font-heading rounded-full bg-[#2E7D32] text-white hover:bg-[#1B5E20] transition-colors shadow-2xs"
                         >
                           <span>Buka di WebGIS</span>
                           <ArrowRight className="w-3 h-3" />
@@ -232,16 +233,16 @@ export default function InteractiveMapSection() {
             })}
           </MapContainer>
 
-          {/* Top Left Status Badge */}
-          <div className="absolute top-4 left-4 z-20 bg-white/95 backdrop-blur-md px-3.5 py-2 rounded-xl border border-slate-200/80 shadow-xs flex items-center gap-2 text-xs font-medium text-slate-800 pointer-events-none">
-            <span className="w-2 h-2 rounded-full bg-[#2E7D32]" />
-            <span className="font-semibold font-heading">Kabupaten Pringsewu</span>
-            <span className="text-slate-300">|</span>
-            <span className="text-slate-500">{farmFeatures.length} Titik Terdata</span>
+          {/* Top Left Status Badge - MD3 Assist Pill */}
+          <div className="absolute top-4 left-4 z-20 bg-white/95 backdrop-blur-md px-4 py-2 rounded-full border border-[#C2C9BD]/60 shadow-xs flex items-center gap-2.5 text-xs font-medium text-[#191C19] pointer-events-none">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#2E7D32]" />
+            <span className="font-bold font-heading">Kabupaten Pringsewu</span>
+            <span className="text-[#C2C9BD]">|</span>
+            <span className="text-[#495348] font-semibold">{farmFeatures.length} Titik Terdata</span>
           </div>
 
-          {/* Bottom Left Minimal Legend */}
-          <div className="absolute bottom-4 left-4 z-20 bg-white/95 backdrop-blur-md px-3.5 py-2.5 rounded-xl border border-slate-200/80 shadow-xs text-xs font-medium text-slate-700 hidden sm:flex items-center gap-4">
+          {/* Bottom Left Minimal Legend - MD3 Assist Pill */}
+          <div className="absolute bottom-4 left-4 z-20 bg-white/95 backdrop-blur-md px-4 py-2 rounded-full border border-[#C2C9BD]/60 shadow-xs text-xs font-semibold text-[#495348] hidden sm:flex items-center gap-4">
             <div className="flex items-center gap-1.5">
               <span className="w-2.5 h-2.5 rounded-full bg-[#2E7D32]" />
               <span>Skala Besar</span>
@@ -268,7 +269,7 @@ export default function InteractiveMapSection() {
       >
         <Link
           to="/spasial"
-          className="inline-flex items-center gap-2 px-7 py-3.5 text-sm font-semibold rounded-lg bg-[#2E7D32] hover:bg-[#236327] active:scale-[0.98] text-white shadow-md transition-all duration-200"
+          className="inline-flex items-center gap-2 px-8 py-3.5 text-sm font-bold font-heading rounded-full bg-[#2E7D32] hover:bg-[#1B5E20] active:scale-[0.98] text-white shadow-md hover:shadow-lg transition-all duration-200"
         >
           <MapPin className="w-4 h-4" />
           <span>Eksplorasi WebGIS Lengkap</span>

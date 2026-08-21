@@ -88,8 +88,9 @@ export default function CapabilitiesSection() {
             {/* Tiny Window into Real Map App */}
             <div className="w-full h-[400px] md:h-[480px] rounded-2xl overflow-hidden border border-slate-200 shadow-xs bg-white relative">
               <MapContainer
-                center={[-5.3582, 104.9749]}
-                zoom={11}
+                center={[-5.2480, 105.0150]}
+                zoom={12.8}
+                zoomSnap={0.2}
                 zoomControl={false}
                 scrollWheelZoom={false}
                 className="w-full h-full z-10"
@@ -102,11 +103,11 @@ export default function CapabilitiesSection() {
                   positions={pringsewuPolygon}
                   pathOptions={{ color: '#2E7D32', weight: 2, fillColor: '#2E7D32', fillOpacity: 0.1 }}
                 />
-                <Marker position={[-5.3620, 104.9580]} icon={miniMarker}>
+                <Marker position={[-5.226928, 105.020538]} icon={miniMarker}>
                   <Popup className="custom-popup">
                     <div className="p-2 text-xs">
-                      <strong>Sentra Sapi Pagelaran</strong><br />
-                      Populasi: 2.450 ekor
+                      <strong>Sentra Peternakan Adiluwih</strong><br />
+                      Populasi: 5.200 ekor
                     </div>
                   </Popup>
                 </Marker>
