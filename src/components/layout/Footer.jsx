@@ -21,31 +21,36 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="w-full bg-[#0F172A] text-slate-300 font-body select-none">
+    <footer className="w-full bg-[#111611] text-[#A3B3A2] font-body select-none">
       
-      {/* Optional Pre-Footer Closing CTA Section */}
-      <div className="border-b border-slate-800/80 py-16 md:py-20">
+      {/* Pre-Footer Closing CTA Section - MD3 Rich Container */}
+      <div className="border-b border-[#2E7D32]/20 py-16 md:py-20">
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.5 }}
           transition={{ duration: 0.6 }}
-          className="max-w-[1400px] mx-auto px-6 lg:px-12 flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left"
+          className="max-w-[1400px] mx-auto px-6 lg:px-12"
         >
-          <div className="space-y-1">
-            <h3 className="text-2xl sm:text-3xl font-extrabold font-heading text-white tracking-tight">
-              Ready to explore spatial livestock information?
-            </h3>
-            <p className="text-sm sm:text-base text-slate-400 font-body">
-              Akses peta spasial interaktif dan data geospasial peternakan Kabupaten Pringsewu.
-            </p>
+          <div className="rounded-[28px] border border-[#2E7D32]/30 bg-gradient-to-br from-[#1B5E20]/40 via-[#162B17]/60 to-[#111611] p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8 text-center md:text-left shadow-2xl relative overflow-hidden">
+            <div className="space-y-2 relative z-10">
+              <span className="text-xs font-bold uppercase tracking-widest text-[#81C784] font-heading">
+                Eksplorasi Geospasial Peternakan
+              </span>
+              <h3 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold font-heading text-white tracking-tight">
+                Siap menjelajahi peta sebaran peternakan Pringsewu?
+              </h3>
+              <p className="text-sm sm:text-base text-[#C2C9BD] font-body max-w-[60ch]">
+                Akses peta interaktif, zonasi komoditas, dan data spasial peternakan 9 kecamatan secara langsung.
+              </p>
+            </div>
+            <Link
+              to="/spasial"
+              className="relative z-10 inline-flex items-center justify-center px-8 py-4 text-sm font-bold font-heading rounded-full bg-[#2E7D32] hover:bg-[#1B5E20] active:scale-[0.98] text-white shadow-xl transition-all duration-200 shrink-0"
+            >
+              Eksplorasi WebGIS
+            </Link>
           </div>
-          <Link
-            to="/spasial"
-            className="inline-flex items-center justify-center px-7 py-3.5 text-sm font-semibold rounded-lg bg-[#2E7D32] hover:bg-[#236327] active:scale-[0.98] text-white shadow-lg transition-all duration-200 shrink-0"
-          >
-            Eksplorasi WebGIS
-          </Link>
         </motion.div>
       </div>
 
@@ -56,32 +61,32 @@ export default function Footer() {
           {/* Column 1: Brand & Institutional Identity */}
           <div className="space-y-4">
             <Link to="/" className="flex items-center gap-3 group">
-              <div className="w-9 h-9 rounded-lg bg-[#2E7D32] text-white flex items-center justify-center">
-                <MapPin className="w-5 h-5 stroke-[2]" />
+              <div className="w-10 h-10 rounded-2xl bg-[#2E7D32] text-white flex items-center justify-center group-hover:scale-105 transition-transform">
+                <MapPin className="w-5 h-5 stroke-[2.2]" />
               </div>
               <span className="font-extrabold text-xl tracking-tight font-heading text-white">
-                Panganspasial<span className="text-emerald-400">.id</span>
+                Panganspasial<span className="text-[#81C784]">.id</span>
               </span>
             </Link>
-            <p className="text-sm text-slate-400 leading-relaxed font-body max-w-sm">
-              A modern WebGIS platform providing integrated spatial information for livestock development in Kabupaten Pringsewu.
+            <p className="text-sm text-[#A3B3A2] leading-relaxed font-body max-w-sm">
+              Platform WebGIS & SDSS terintegrasi untuk keterbukaan data geospasial peternakan di Kabupaten Pringsewu.
             </p>
-            <div className="pt-2 text-xs text-slate-500 font-body">
+            <div className="pt-2 text-xs text-[#748574] font-body font-semibold">
               Dinas Pertanian & Peternakan Kabupaten Pringsewu
             </div>
           </div>
 
           {/* Column 2: Navigation */}
           <div className="space-y-4">
-            <h4 className="text-sm font-bold font-heading uppercase tracking-wider text-white">
-              Navigation
+            <h4 className="text-xs font-bold font-heading uppercase tracking-widest text-[#81C784]">
+              Navigasi Halaman
             </h4>
             <ul className="space-y-2.5 text-sm">
               {navLinks.map((link) => (
                 <li key={link.name}>
                   <Link
                     to={link.path}
-                    className="text-slate-400 hover:text-white transition-colors duration-200"
+                    className="text-[#A3B3A2] hover:text-white transition-colors duration-200"
                   >
                     {link.name}
                   </Link>
@@ -92,15 +97,15 @@ export default function Footer() {
 
           {/* Column 3: Platform */}
           <div className="space-y-4">
-            <h4 className="text-sm font-bold font-heading uppercase tracking-wider text-white">
-              Platform
+            <h4 className="text-xs font-bold font-heading uppercase tracking-widest text-[#81C784]">
+              Modul Platform
             </h4>
             <ul className="space-y-2.5 text-sm">
               {platformLinks.map((item) => (
                 <li key={item.name}>
                   <Link
                     to={item.path}
-                    className="text-slate-400 hover:text-white transition-colors duration-200"
+                    className="text-[#A3B3A2] hover:text-white transition-colors duration-200"
                   >
                     {item.name}
                   </Link>
@@ -111,22 +116,28 @@ export default function Footer() {
 
           {/* Column 4: Contact & Office Address */}
           <div className="space-y-4">
-            <h4 className="text-sm font-bold font-heading uppercase tracking-wider text-white">
-              Contact
+            <h4 className="text-xs font-bold font-heading uppercase tracking-widest text-[#81C784]">
+              Kontak Instansi
             </h4>
-            <div className="space-y-3 text-sm text-slate-400">
-              <div className="flex items-start gap-2.5">
-                <Building2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                <span>Jl. Suhada No. 1, Pringsewu Barat, Kabupaten Pringsewu, Lampung 35373</span>
+            <div className="space-y-3.5 text-sm text-[#A3B3A2]">
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-full bg-[#1B5E20]/40 text-[#81C784] flex items-center justify-center shrink-0 mt-0.5">
+                  <Building2 className="w-4 h-4" />
+                </div>
+                <span>Jl. Suhada No. 1, Pringsewu Barat, Kab. Pringsewu, Lampung 35373</span>
               </div>
-              <div className="flex items-center gap-2.5">
-                <Mail className="w-4 h-4 text-emerald-400 shrink-0" />
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-[#1B5E20]/40 text-[#81C784] flex items-center justify-center shrink-0">
+                  <Mail className="w-4 h-4" />
+                </div>
                 <a href="mailto:info@panganspasial.id" className="hover:text-white transition-colors">
                   info@panganspasial.id
                 </a>
               </div>
-              <div className="flex items-center gap-2.5">
-                <Phone className="w-4 h-4 text-emerald-400 shrink-0" />
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-[#1B5E20]/40 text-[#81C784] flex items-center justify-center shrink-0">
+                  <Phone className="w-4 h-4" />
+                </div>
                 <a href="tel:+62729123456" className="hover:text-white transition-colors">
                   +62 (729) 123-456
                 </a>
@@ -138,13 +149,15 @@ export default function Footer() {
       </div>
 
       {/* Final Bottom Bar */}
-      <div className="border-t border-slate-800/80 py-8">
-        <div className="max-w-[1400px] mx-auto px-6 lg:px-12 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 font-body">
+      <div className="border-t border-[#2E7D32]/20 py-8">
+        <div className="max-w-[1400px] mx-auto px-6 lg:px-12 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#748574] font-body">
           <div>
-            © 2026 Panganspasial.id. Hak Cipta Dilindungi.
+            © 2026 Panganspasial.id. Hak Cipta Dilindungi Pemerintah Kabupaten Pringsewu.
           </div>
-          <div>
-            Built with React, React Leaflet, Tailwind CSS
+          <div className="flex items-center gap-2">
+            <span>Material Design 3</span>
+            <span>•</span>
+            <span>WebGIS & SDSS SAW</span>
           </div>
         </div>
       </div>
