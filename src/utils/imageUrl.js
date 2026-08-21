@@ -6,7 +6,26 @@ export function getImageUrl(filePath) {
     return 'https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?q=80&w=800&auto=format&fit=crop';
   }
 
-  if (filePath.startsWith('http://') || filePath.startsWith('https://') || filePath.startsWith('blob:')) {
+  // If passed a photo object directly
+  if (typeof filePath === 'object') {
+    filePath =
+      filePath.file_path ||
+      filePath.url ||
+      filePath.image_url ||
+      filePath.path ||
+      filePath.photo_url ||
+      filePath.filename;
+    if (!filePath) {
+      return 'https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?q=80&w=800&auto=format&fit=crop';
+    }
+  }
+
+  if (
+    filePath.startsWith('http://') ||
+    filePath.startsWith('https://') ||
+    filePath.startsWith('blob:') ||
+    filePath.startsWith('data:')
+  ) {
     return filePath;
   }
 
