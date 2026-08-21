@@ -52,15 +52,15 @@ export default function AdminUsersPage() {
   });
 
   return (
-    <div className="space-y-6 font-body text-slate-800">
+    <div className="space-y-6 font-body text-[#191C19] max-w-7xl mx-auto">
       
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold font-heading text-slate-900 tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-extrabold font-heading text-[#191C19] tracking-tight">
             Manajemen Akun Administrator
           </h1>
-          <p className="text-xs text-slate-500 mt-0.5">
+          <p className="text-xs sm:text-sm text-[#495348] mt-1">
             Kelola hak akses operator survei, petugas dinas, dan super administrator.
           </p>
         </div>
@@ -71,7 +71,7 @@ export default function AdminUsersPage() {
             setEditingUser(null);
             setUserModalOpen(true);
           }}
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#2E7D32] hover:bg-[#236327] active:scale-[0.98] text-white text-xs font-bold font-heading shadow-xs transition-colors shrink-0"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#2E7D32] hover:bg-[#1B5E20] active:scale-[0.98] text-white text-xs font-bold font-heading shadow-xs transition-all shrink-0"
         >
           <Plus className="w-4 h-4" />
           <span>Tambah Admin Baru</span>
@@ -79,7 +79,7 @@ export default function AdminUsersPage() {
       </div>
 
       {/* Users Table Card */}
-      <div className="p-6 sm:p-8 rounded-3xl bg-white border border-slate-200/80 shadow-xs space-y-6 text-xs">
+      <div className="p-6 sm:p-8 rounded-3xl bg-white border border-[#C2C9BD]/50 shadow-2xs space-y-6 text-xs">
         {isLoading ? (
           <TableSkeleton rows={4} cols={5} />
         ) : isError ? (
@@ -87,35 +87,35 @@ export default function AdminUsersPage() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left">
-              <thead className="bg-slate-50 text-slate-500 uppercase font-heading text-[10px] tracking-wider border-b border-slate-200">
+              <thead className="bg-[#F1F5F1]/70 text-[#495348] uppercase font-heading text-[10px] tracking-wider border-b border-[#E2E8E2]">
                 <tr>
-                  <th className="py-3.5 px-4">Nama Lengkap</th>
+                  <th className="py-3.5 px-4 rounded-l-xl">Nama Lengkap</th>
                   <th className="py-3.5 px-4">Email Login</th>
                   <th className="py-3.5 px-4 text-center">Peran (Role)</th>
                   <th className="py-3.5 px-4 text-center">Status Akun</th>
                   <th className="py-3.5 px-4">Waktu Terdaftar</th>
-                  <th className="py-3.5 px-4 text-right">Aksi</th>
+                  <th className="py-3.5 px-4 text-right rounded-r-xl">Aksi</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-[#E2E8E2]/60">
                 {users.map((u) => {
                   const roleName = typeof u.role === 'object' && u.role !== null
                     ? (u.role.name || 'Admin')
                     : (u.role || 'Admin');
 
                   return (
-                    <tr key={u.id} className="hover:bg-slate-50/80">
+                    <tr key={u.id} className="hover:bg-[#F1F5F1]/40 transition-colors">
                       <td className="py-3.5 px-4">
-                        <div className="flex items-center gap-2.5">
-                          <div className="w-7 h-7 rounded-full bg-emerald-100 text-[#2E7D32] font-bold text-xs font-heading flex items-center justify-center">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-full bg-[#E8F5E9] text-[#1B5E20] font-bold text-xs font-heading flex items-center justify-center shadow-2xs">
                             {u.name?.charAt(0) || 'U'}
                           </div>
                           <div>
-                            <span className="font-bold text-slate-900 font-heading block">
+                            <span className="font-bold text-[#191C19] font-heading block text-sm">
                               {u.name}
                             </span>
                             {String(u.id) === String(currentUser?.id) && (
-                              <span className="text-[10px] text-emerald-600 font-medium">
+                              <span className="text-[10px] text-[#2E7D32] font-semibold">
                                 (Akun Anda Saat Ini)
                               </span>
                             )}
@@ -123,26 +123,26 @@ export default function AdminUsersPage() {
                         </div>
                       </td>
 
-                      <td className="py-3.5 px-4 text-slate-600 font-mono text-[11px]">
+                      <td className="py-3.5 px-4 text-[#495348] font-mono text-[11px]">
                         {u.email}
                       </td>
 
                       <td className="py-3.5 px-4 text-center">
-                        <span className="px-2.5 py-1 rounded-full text-[10px] font-bold font-heading bg-slate-100 text-slate-700">
+                        <span className="px-3 py-1 rounded-full text-[10px] font-bold font-heading bg-[#E8EFE8] text-[#1B5E20]">
                           {roleName}
                         </span>
                       </td>
 
                       <td className="py-3.5 px-4 text-center">
-                        <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold ${
-                          u.is_active ? 'bg-emerald-50 text-[#2E7D32]' : 'bg-red-50 text-red-700'
+                        <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold font-heading ${
+                          u.is_active ? 'bg-[#E8F5E9] text-[#1B5E20] border border-[#C8E6C9]' : 'bg-[#FFDAD6] text-[#BA1A1A] border border-[#FFCDD2]'
                         }`}>
                           {u.is_active ? <UserCheck className="w-3 h-3" /> : <UserX className="w-3 h-3" />}
                           <span>{u.is_active ? 'Aktif' : 'Nonaktif'}</span>
                         </span>
                       </td>
 
-                      <td className="py-3.5 px-4 text-slate-500 font-mono text-[11px]">
+                      <td className="py-3.5 px-4 text-[#495348] font-mono text-[11px]">
                         {u.created_at ? new Date(u.created_at).toLocaleDateString('id-ID', { dateStyle: 'medium' }) : '-'}
                       </td>
 
@@ -154,7 +154,7 @@ export default function AdminUsersPage() {
                               setEditingUser(u);
                               setUserModalOpen(true);
                             }}
-                            className="p-1.5 text-slate-400 hover:text-blue-600 transition-colors"
+                            className="p-2 rounded-full text-[#495348] hover:text-[#1565C0] hover:bg-[#E3F2FD] transition-colors"
                             title="Edit Admin"
                           >
                             <Edit className="w-3.5 h-3.5" />
@@ -170,7 +170,7 @@ export default function AdminUsersPage() {
                                   name: u.name,
                                 })
                               }
-                              className="p-1.5 text-slate-400 hover:text-red-600 transition-colors"
+                              className="p-2 rounded-full text-[#495348] hover:text-[#BA1A1A] hover:bg-[#FFDAD6]/50 transition-colors"
                               title="Hapus Admin"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
@@ -281,32 +281,32 @@ function UserFormModal({ isOpen, onClose, initialData, onSuccess }) {
     >
       <form onSubmit={handleSubmit} className="space-y-4 text-xs font-body">
         
-        <div className="space-y-1">
-          <label className="font-semibold text-slate-700 block">Nama Lengkap *</label>
+        <div className="space-y-1.5">
+          <label className="font-bold text-[#191C19] block font-heading">Nama Lengkap *</label>
           <input
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Contoh: Budi Gunawan"
-            className="w-full px-3 py-2 bg-slate-50 rounded-xl border border-slate-200 text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#2E7D32]"
+            className="w-full px-4 py-2.5 bg-[#F1F5F1]/50 rounded-xl border border-[#C2C9BD] text-[#191C19] placeholder:text-[#495348]/60 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#2E7D32] focus:border-[#2E7D32] transition-all"
             required
           />
         </div>
 
-        <div className="space-y-1">
-          <label className="font-semibold text-slate-700 block">Alamat Email *</label>
+        <div className="space-y-1.5">
+          <label className="font-bold text-[#191C19] block font-heading">Alamat Email *</label>
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="nama@panganspasial.id"
-            className="w-full px-3 py-2 bg-slate-50 rounded-xl border border-slate-200 text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#2E7D32]"
+            className="w-full px-4 py-2.5 bg-[#F1F5F1]/50 rounded-xl border border-[#C2C9BD] text-[#191C19] placeholder:text-[#495348]/60 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#2E7D32] focus:border-[#2E7D32] transition-all"
             required
           />
         </div>
 
-        <div className="space-y-1">
-          <label className="font-semibold text-slate-700 block">
+        <div className="space-y-1.5">
+          <label className="font-bold text-[#191C19] block font-heading">
             {initialData ? 'Kata Sandi Baru (Kosongkan jika tidak diubah)' : 'Kata Sandi (Password) *'}
           </label>
           <input
@@ -314,46 +314,46 @@ function UserFormModal({ isOpen, onClose, initialData, onSuccess }) {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="••••••••"
-            className="w-full px-3 py-2 bg-slate-50 rounded-xl border border-slate-200 text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#2E7D32]"
+            className="w-full px-4 py-2.5 bg-[#F1F5F1]/50 rounded-xl border border-[#C2C9BD] text-[#191C19] placeholder:text-[#495348]/60 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#2E7D32] focus:border-[#2E7D32] transition-all"
             required={!initialData}
           />
         </div>
 
-        <div className="space-y-1">
-          <label className="font-semibold text-slate-700 block">Peran (Role) *</label>
+        <div className="space-y-1.5">
+          <label className="font-bold text-[#191C19] block font-heading">Peran (Role) *</label>
           <select
             value={roleId}
             onChange={(e) => setRoleId(e.target.value)}
-            className="w-full px-3 py-2 bg-slate-50 rounded-xl border border-slate-200 text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#2E7D32]"
+            className="w-full px-3.5 py-2.5 bg-[#F1F5F1]/50 rounded-xl border border-[#C2C9BD] text-[#191C19] font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#2E7D32] focus:border-[#2E7D32] transition-all"
           >
             <option value={1}>Administrator (Akses Penuh)</option>
           </select>
         </div>
 
         {initialData && (
-          <label className="flex items-center gap-2 cursor-pointer pt-1">
+          <label className="flex items-center gap-2.5 cursor-pointer pt-1">
             <input
               type="checkbox"
               checked={isActive}
               onChange={(e) => setIsActive(e.target.checked)}
-              className="rounded border-slate-300 text-[#2E7D32] focus:ring-[#2E7D32] w-4 h-4"
+              className="rounded border-[#C2C9BD] text-[#2E7D32] focus:ring-[#2E7D32] w-4 h-4"
             />
-            <span className="text-slate-700 font-medium">Akun Aktif (Dapat Login)</span>
+            <span className="text-[#191C19] font-semibold">Akun Aktif (Dapat Login)</span>
           </label>
         )}
 
-        <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
+        <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-[#E2E8E2]">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs font-semibold"
+            className="px-5 py-2.5 rounded-full border border-[#C2C9BD] text-[#495348] hover:bg-[#F1F5F1] text-xs font-bold font-heading transition-colors"
           >
             Batal
           </button>
           <button
             type="submit"
             disabled={isSubmitting}
-            className="px-5 py-2 rounded-lg bg-[#2E7D32] hover:bg-[#236327] text-white text-xs font-bold font-heading disabled:opacity-50"
+            className="px-6 py-2.5 rounded-full bg-[#2E7D32] hover:bg-[#1B5E20] text-white text-xs font-bold font-heading transition-all shadow-xs disabled:opacity-50"
           >
             {isSubmitting ? 'Menyimpan...' : 'Simpan Akun'}
           </button>

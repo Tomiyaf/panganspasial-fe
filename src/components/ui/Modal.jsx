@@ -41,25 +41,25 @@ export default function Modal({
             className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs"
           />
 
-          {/* Modal Card */}
+          {/* MD3 Dialog Card */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.96, y: 10 }}
+            initial={{ opacity: 0, scale: 0.94, y: 12 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.96, y: 10 }}
-            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-            className={`relative w-full ${maxWidth} bg-white rounded-2xl border border-slate-200/80 shadow-2xl overflow-hidden z-10 my-auto`}
+            exit={{ opacity: 0, scale: 0.94, y: 12 }}
+            transition={{ duration: 0.25, ease: [0.2, 0, 0, 1] }}
+            className={`relative w-full ${maxWidth} bg-white rounded-[28px] border border-[#C2C9BD]/60 shadow-2xl overflow-hidden z-10 my-auto`}
           >
-            {/* Modal Header */}
+            {/* MD3 Dialog Header */}
             {(title || showCloseButton) && (
-              <div className="flex items-start justify-between px-6 py-5 border-b border-slate-100 bg-slate-50/50">
-                <div>
+              <div className="flex items-start justify-between px-7 py-5 border-b border-[#E2E8E2] bg-[#F1F5F1]/70">
+                <div className="pr-4">
                   {title && (
-                    <h3 className="text-lg font-bold font-heading text-slate-900 tracking-tight">
+                    <h3 className="text-base sm:text-lg font-bold font-heading text-[#191C19] tracking-tight">
                       {title}
                     </h3>
                   )}
                   {subtitle && (
-                    <p className="text-xs text-slate-500 font-body mt-0.5 leading-relaxed">
+                    <p className="text-xs text-[#495348] font-body mt-0.5 leading-relaxed">
                       {subtitle}
                     </p>
                   )}
@@ -67,8 +67,8 @@ export default function Modal({
                 {showCloseButton && (
                   <button
                     onClick={onClose}
-                    className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
-                    aria-label="Close modal"
+                    className="p-1.5 rounded-full text-[#495348] hover:text-[#191C19] hover:bg-[#E2E8E2] transition-colors shrink-0"
+                    aria-label="Close dialog"
                   >
                     <X className="w-5 h-5" />
                   </button>
@@ -76,8 +76,8 @@ export default function Modal({
               </div>
             )}
 
-            {/* Modal Body */}
-            <div className="p-6">{children}</div>
+            {/* Dialog Body */}
+            <div className="p-6 sm:p-7">{children}</div>
           </motion.div>
         </div>
       )}

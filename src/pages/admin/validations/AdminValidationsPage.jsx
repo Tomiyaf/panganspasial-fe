@@ -48,15 +48,15 @@ export default function AdminValidationsPage() {
   const meta = validationsRes?.meta || { total: 0, page: 1, limit: 15, total_pages: 1 };
 
   return (
-    <div className="space-y-6 font-body text-slate-800">
+    <div className="space-y-6 font-body text-[#191C19] max-w-7xl mx-auto">
       
       {/* Header & New Validation Action */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold font-heading text-slate-900 tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-extrabold font-heading text-[#191C19] tracking-tight">
             Validasi Data Survei Lapangan
           </h1>
-          <p className="text-xs text-slate-500 mt-0.5">
+          <p className="text-xs sm:text-sm text-[#495348] mt-1">
             Verifikasi fisik laporan peternakan dan populasi ternak oleh mantri hewan.
           </p>
         </div>
@@ -64,7 +64,7 @@ export default function AdminValidationsPage() {
         <button
           type="button"
           onClick={() => setNewValidationModalOpen(true)}
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#2E7D32] hover:bg-[#236327] active:scale-[0.98] text-white text-xs font-bold font-heading shadow-xs transition-colors shrink-0"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#2E7D32] hover:bg-[#1B5E20] active:scale-[0.98] text-white text-xs font-bold font-heading shadow-xs transition-all shrink-0"
         >
           <Plus className="w-4 h-4" />
           <span>Buat Catatan Survei Baru</span>
@@ -72,7 +72,7 @@ export default function AdminValidationsPage() {
       </div>
 
       {/* Filter Bar */}
-      <div className="p-4 rounded-2xl bg-white border border-slate-200/80 shadow-xs flex flex-wrap items-center gap-3 text-xs">
+      <div className="p-4 rounded-3xl bg-white border border-[#C2C9BD]/50 shadow-2xs flex flex-wrap items-center gap-3 text-xs">
         {/* Status Filter */}
         <select
           value={statusFilter}
@@ -80,7 +80,7 @@ export default function AdminValidationsPage() {
             setStatusFilter(e.target.value);
             setPage(1);
           }}
-          className="px-3.5 py-2 bg-slate-50 rounded-xl border border-slate-200 text-slate-800 focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#2E7D32]"
+          className="px-4 py-2.5 bg-[#F1F5F1]/50 rounded-xl border border-[#C2C9BD] text-[#191C19] font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#2E7D32] focus:border-[#2E7D32] transition-all"
         >
           <option value="">Semua Status Survei</option>
           <option value="pending">Pending (Tertunda)</option>
@@ -95,7 +95,7 @@ export default function AdminValidationsPage() {
             setEntityTypeFilter(e.target.value);
             setPage(1);
           }}
-          className="px-3.5 py-2 bg-slate-50 rounded-xl border border-slate-200 text-slate-800 focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#2E7D32]"
+          className="px-4 py-2.5 bg-[#F1F5F1]/50 rounded-xl border border-[#C2C9BD] text-[#191C19] font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#2E7D32] focus:border-[#2E7D32] transition-all"
         >
           <option value="">Semua Tipe Entitas</option>
           <option value="farm">Peternakan (Farm)</option>
@@ -104,7 +104,7 @@ export default function AdminValidationsPage() {
       </div>
 
       {/* Table Container */}
-      <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+      <div className="bg-white rounded-3xl border border-[#C2C9BD]/50 shadow-2xs overflow-hidden">
         {isLoading ? (
           <TableSkeleton rows={6} cols={5} />
         ) : isError ? (
@@ -121,26 +121,26 @@ export default function AdminValidationsPage() {
           <>
             <div className="overflow-x-auto">
               <table className="w-full text-xs text-left">
-                <thead className="bg-slate-50 text-slate-500 uppercase font-heading text-[10px] tracking-wider border-b border-slate-200">
+                <thead className="bg-[#F1F5F1]/70 text-[#495348] uppercase font-heading text-[10px] tracking-wider border-b border-[#E2E8E2]">
                   <tr>
-                    <th className="py-3.5 px-5">Entitas Survei</th>
+                    <th className="py-3.5 px-5 rounded-l-xl">Entitas Survei</th>
                     <th className="py-3.5 px-4">Status Verifikasi</th>
                     <th className="py-3.5 px-4">Petugas / Validator</th>
                     <th className="py-3.5 px-4">Catatan Lapangan</th>
                     <th className="py-3.5 px-4">Waktu Verifikasi</th>
-                    <th className="py-3.5 px-5 text-right">Aksi</th>
+                    <th className="py-3.5 px-5 text-right rounded-r-xl">Aksi</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-[#E2E8E2]/60">
                   {validations.map((v) => (
-                    <tr key={v.id} className="hover:bg-slate-50/80 transition-colors">
+                    <tr key={v.id} className="hover:bg-[#F1F5F1]/40 transition-colors">
                       {/* Entity */}
                       <td className="py-3.5 px-5">
                         <div className="flex items-center gap-2.5">
-                          <span className="font-bold text-slate-900 font-heading capitalize">
+                          <span className="font-bold text-[#191C19] font-heading capitalize">
                             {v.entity_type === 'farm' ? 'Unit Peternakan' : 'Komoditas Ternak'}
                           </span>
-                          <span className="font-mono text-[11px] text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">
+                          <span className="font-mono text-[11px] text-[#495348] bg-[#F1F5F1] px-2 py-0.5 rounded-full">
                             #{v.entity_id}
                           </span>
                         </div>
@@ -149,36 +149,36 @@ export default function AdminValidationsPage() {
                       {/* Status */}
                       <td className="py-3.5 px-4">
                         {v.status === 'valid' ? (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold font-heading bg-emerald-50 text-[#2E7D32] border border-emerald-200">
-                            <CheckCircle2 className="w-3 h-3" />
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold font-heading bg-[#E8F5E9] text-[#1B5E20] border border-[#C8E6C9]">
+                            <CheckCircle2 className="w-3.5 h-3.5" />
                             <span>Valid</span>
                           </span>
                         ) : v.status === 'rejected' ? (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold font-heading bg-red-50 text-red-700 border border-red-200">
-                            <XCircle className="w-3 h-3" />
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold font-heading bg-[#FFDAD6] text-[#BA1A1A] border border-[#FFCDD2]">
+                            <XCircle className="w-3.5 h-3.5" />
                             <span>Ditolak</span>
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold font-heading bg-amber-50 text-amber-700 border border-amber-200">
-                            <Clock className="w-3 h-3" />
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold font-heading bg-[#FFF8E1] text-[#5D3F00] border border-[#FFF0C2]">
+                            <Clock className="w-3.5 h-3.5" />
                             <span>Pending</span>
                           </span>
                         )}
                       </td>
 
                       {/* Validator */}
-                      <td className="py-3.5 px-4 text-slate-700">
-                        <span className="font-semibold block">{v.validator?.name || 'Dr. Subandi'}</span>
-                        <span className="text-[10px] text-slate-400">{v.validator?.email || 'Mantri Hewan'}</span>
+                      <td className="py-3.5 px-4 text-[#191C19]">
+                        <span className="font-bold block">{v.validator?.name || 'Dr. Subandi'}</span>
+                        <span className="text-[10px] text-[#495348]">{v.validator?.email || 'Mantri Hewan'}</span>
                       </td>
 
                       {/* Notes */}
-                      <td className="py-3.5 px-4 text-slate-600 max-w-sm leading-relaxed">
+                      <td className="py-3.5 px-4 text-[#495348] max-w-sm leading-relaxed">
                         {v.notes || 'Hasil pemeriksaan fisik kandang dan sanitasi'}
                       </td>
 
                       {/* Validated At */}
-                      <td className="py-3.5 px-4 text-slate-500 font-mono text-[11px]">
+                      <td className="py-3.5 px-4 text-[#495348] font-mono text-[11px]">
                         {v.validated_at ? new Date(v.validated_at).toLocaleDateString('id-ID', { dateStyle: 'medium' }) : '-'}
                       </td>
 
@@ -190,7 +190,7 @@ export default function AdminValidationsPage() {
                             setSelectedRecord(v);
                             setVerifyModalOpen(true);
                           }}
-                          className="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-[#2E7D32] hover:text-white text-slate-700 text-xs font-semibold font-heading transition-colors"
+                          className="px-4 py-1.5 rounded-full bg-[#E8F5E9] hover:bg-[#2E7D32] hover:text-white text-[#1B5E20] text-xs font-bold font-heading transition-colors"
                         >
                           Verifikasi
                         </button>
@@ -277,11 +277,11 @@ function VerifyStatusModal({ isOpen, onClose, record, onSuccess }) {
       maxWidth="max-w-md"
     >
       <form onSubmit={handleSubmit} className="space-y-4 text-xs font-body">
-        <div className="space-y-1.5">
-          <label className="font-semibold text-slate-700 block">Pilih Status Verifikasi *</label>
+        <div className="space-y-2">
+          <label className="font-bold text-[#191C19] block font-heading">Pilih Status Verifikasi *</label>
           <div className="grid grid-cols-3 gap-2">
-            <label className={`p-3 rounded-xl border flex flex-col items-center gap-1 cursor-pointer transition-colors ${
-              status === 'valid' ? 'border-emerald-500 bg-emerald-50 text-[#2E7D32]' : 'border-slate-200 text-slate-700'
+            <label className={`p-3 rounded-2xl border flex flex-col items-center gap-1.5 cursor-pointer transition-all ${
+              status === 'valid' ? 'border-[#2E7D32] bg-[#E8F5E9] text-[#1B5E20] shadow-xs' : 'border-[#C2C9BD]/70 text-[#495348] hover:bg-[#F1F5F1]'
             }`}>
               <input
                 type="radio"
@@ -291,12 +291,12 @@ function VerifyStatusModal({ isOpen, onClose, record, onSuccess }) {
                 onChange={(e) => setStatus(e.target.value)}
                 className="sr-only"
               />
-              <CheckCircle2 className="w-4 h-4" />
+              <CheckCircle2 className="w-5 h-5 text-[#2E7D32]" />
               <span className="font-bold font-heading">Valid</span>
             </label>
 
-            <label className={`p-3 rounded-xl border flex flex-col items-center gap-1 cursor-pointer transition-colors ${
-              status === 'rejected' ? 'border-red-500 bg-red-50 text-red-700' : 'border-slate-200 text-slate-700'
+            <label className={`p-3 rounded-2xl border flex flex-col items-center gap-1.5 cursor-pointer transition-all ${
+              status === 'rejected' ? 'border-[#BA1A1A] bg-[#FFDAD6] text-[#410002] shadow-xs' : 'border-[#C2C9BD]/70 text-[#495348] hover:bg-[#F1F5F1]'
             }`}>
               <input
                 type="radio"
@@ -306,12 +306,12 @@ function VerifyStatusModal({ isOpen, onClose, record, onSuccess }) {
                 onChange={(e) => setStatus(e.target.value)}
                 className="sr-only"
               />
-              <XCircle className="w-4 h-4" />
+              <XCircle className="w-5 h-5 text-[#BA1A1A]" />
               <span className="font-bold font-heading">Ditolak</span>
             </label>
 
-            <label className={`p-3 rounded-xl border flex flex-col items-center gap-1 cursor-pointer transition-colors ${
-              status === 'pending' ? 'border-amber-500 bg-amber-50 text-amber-700' : 'border-slate-200 text-slate-700'
+            <label className={`p-3 rounded-2xl border flex flex-col items-center gap-1.5 cursor-pointer transition-all ${
+              status === 'pending' ? 'border-[#B78103] bg-[#FFF8E1] text-[#5D3F00] shadow-xs' : 'border-[#C2C9BD]/70 text-[#495348] hover:bg-[#F1F5F1]'
             }`}>
               <input
                 type="radio"
@@ -321,36 +321,36 @@ function VerifyStatusModal({ isOpen, onClose, record, onSuccess }) {
                 onChange={(e) => setStatus(e.target.value)}
                 className="sr-only"
               />
-              <Clock className="w-4 h-4" />
+              <Clock className="w-5 h-5 text-[#B78103]" />
               <span className="font-bold font-heading">Pending</span>
             </label>
           </div>
         </div>
 
         <div className="space-y-1.5">
-          <label className="font-semibold text-slate-700 block">Catatan Mantri / Bukti Survei *</label>
+          <label className="font-bold text-[#191C19] block font-heading">Catatan Mantri / Bukti Survei *</label>
           <textarea
             rows={3}
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             placeholder="Tuliskan catatan hasil verifikasi kondisi fisik kandang atau alasan penolakan..."
-            className="w-full px-3 py-2 bg-slate-50 rounded-xl border border-slate-200 text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#2E7D32]"
+            className="w-full px-4 py-2.5 bg-[#F1F5F1]/50 rounded-xl border border-[#C2C9BD] text-[#191C19] placeholder:text-[#495348]/60 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#2E7D32] focus:border-[#2E7D32] transition-all"
             required
           />
         </div>
 
-        <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
+        <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-[#E2E8E2]">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs font-semibold"
+            className="px-5 py-2.5 rounded-full border border-[#C2C9BD] text-[#495348] hover:bg-[#F1F5F1] text-xs font-bold font-heading transition-colors"
           >
             Batal
           </button>
           <button
             type="submit"
             disabled={isSubmitting}
-            className="px-5 py-2 rounded-lg bg-[#2E7D32] hover:bg-[#236327] text-white text-xs font-bold font-heading disabled:opacity-50"
+            className="px-6 py-2.5 rounded-full bg-[#2E7D32] hover:bg-[#1B5E20] text-white text-xs font-bold font-heading transition-all shadow-xs disabled:opacity-50"
           >
             {isSubmitting ? 'Menyimpan...' : 'Simpan Verifikasi'}
           </button>
@@ -404,11 +404,11 @@ function CreateValidationModal({ isOpen, onClose, onSuccess }) {
     >
       <form onSubmit={handleSubmit} className="space-y-4 text-xs font-body">
         <div className="space-y-1.5">
-          <label className="font-semibold text-slate-700 block">Tipe Entitas *</label>
+          <label className="font-bold text-[#191C19] block font-heading">Tipe Entitas *</label>
           <select
             value={entityType}
             onChange={(e) => setEntityType(e.target.value)}
-            className="w-full px-3 py-2 bg-slate-50 rounded-xl border border-slate-200 text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#2E7D32]"
+            className="w-full px-3.5 py-2.5 bg-[#F1F5F1]/50 rounded-xl border border-[#C2C9BD] text-[#191C19] font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#2E7D32] focus:border-[#2E7D32] transition-all"
           >
             <option value="farm">Unit Peternakan (Farm)</option>
             <option value="livestock">Komoditas Ternak (Livestock)</option>
@@ -416,23 +416,23 @@ function CreateValidationModal({ isOpen, onClose, onSuccess }) {
         </div>
 
         <div className="space-y-1.5">
-          <label className="font-semibold text-slate-700 block">ID Entitas Terdaftar *</label>
+          <label className="font-bold text-[#191C19] block font-heading">ID Entitas Terdaftar *</label>
           <input
             type="text"
             value={entityId}
             onChange={(e) => setEntityId(e.target.value)}
             placeholder="Contoh: 1"
-            className="w-full px-3 py-2 bg-slate-50 rounded-xl border border-slate-200 text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#2E7D32]"
+            className="w-full px-4 py-2.5 bg-[#F1F5F1]/50 rounded-xl border border-[#C2C9BD] text-[#191C19] font-mono focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#2E7D32] focus:border-[#2E7D32] transition-all"
             required
           />
         </div>
 
         <div className="space-y-1.5">
-          <label className="font-semibold text-slate-700 block">Status Awal *</label>
+          <label className="font-bold text-[#191C19] block font-heading">Status Awal *</label>
           <select
             value={status}
             onChange={(e) => setStatus(e.target.value)}
-            className="w-full px-3 py-2 bg-slate-50 rounded-xl border border-slate-200 text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#2E7D32]"
+            className="w-full px-3.5 py-2.5 bg-[#F1F5F1]/50 rounded-xl border border-[#C2C9BD] text-[#191C19] font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#2E7D32] focus:border-[#2E7D32] transition-all"
           >
             <option value="pending">Pending (Menunggu Verifikasi)</option>
             <option value="valid">Valid (Disetujui)</option>
@@ -441,28 +441,28 @@ function CreateValidationModal({ isOpen, onClose, onSuccess }) {
         </div>
 
         <div className="space-y-1.5">
-          <label className="font-semibold text-slate-700 block">Catatan Pemeriksaan Lapangan</label>
+          <label className="font-bold text-[#191C19] block font-heading">Catatan Pemeriksaan Lapangan</label>
           <textarea
             rows={3}
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             placeholder="Keterangan kondisi kandang, populasi riil, atau catatan mantri..."
-            className="w-full px-3 py-2 bg-slate-50 rounded-xl border border-slate-200 text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#2E7D32]"
+            className="w-full px-4 py-2.5 bg-[#F1F5F1]/50 rounded-xl border border-[#C2C9BD] text-[#191C19] placeholder:text-[#495348]/60 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#2E7D32] focus:border-[#2E7D32] transition-all"
           />
         </div>
 
-        <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
+        <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-[#E2E8E2]">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs font-semibold"
+            className="px-5 py-2.5 rounded-full border border-[#C2C9BD] text-[#495348] hover:bg-[#F1F5F1] text-xs font-bold font-heading transition-colors"
           >
             Batal
           </button>
           <button
             type="submit"
             disabled={isSubmitting}
-            className="px-5 py-2 rounded-lg bg-[#2E7D32] hover:bg-[#236327] text-white text-xs font-bold font-heading disabled:opacity-50"
+            className="px-6 py-2.5 rounded-full bg-[#2E7D32] hover:bg-[#1B5E20] text-white text-xs font-bold font-heading transition-all shadow-xs disabled:opacity-50"
           >
             {isSubmitting ? 'Membuat...' : 'Buat Catatan'}
           </button>

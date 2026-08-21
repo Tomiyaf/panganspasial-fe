@@ -8,22 +8,22 @@ export default function EmptyState({
   icon: Icon = FolderOpen,
 }) {
   return (
-    <div className="flex flex-col items-center justify-center p-12 text-center bg-white rounded-2xl border border-slate-200/80 shadow-xs">
-      <div className="w-12 h-12 rounded-xl bg-slate-100 text-slate-400 flex items-center justify-center mb-3">
-        <Icon className="w-6 h-6 stroke-[1.5]" />
+    <div className="flex flex-col items-center justify-center p-12 text-center bg-white rounded-3xl border border-[#C2C9BD]/50 shadow-xs">
+      <div className="w-14 h-14 rounded-full bg-[#E8EFE8] text-[#2E7D32] flex items-center justify-center mb-4">
+        <Icon className="w-7 h-7 stroke-[1.8]" />
       </div>
-      <h4 className="text-base font-bold font-heading text-slate-900 tracking-tight">
+      <h4 className="text-base font-bold font-heading text-[#191C19] tracking-tight">
         {title}
       </h4>
-      <p className="text-xs text-slate-500 font-body max-w-sm mt-1 leading-relaxed">
+      <p className="text-xs text-[#495348] font-body max-w-sm mt-1 leading-relaxed">
         {description}
       </p>
       {actionLabel && onAction && (
-        <div className="mt-5">
+        <div className="mt-6">
           <button
             type="button"
             onClick={onAction}
-            className="px-4 py-2 text-xs font-semibold font-heading rounded-lg bg-[#2E7D32] hover:bg-[#236327] text-white shadow-xs transition-colors"
+            className="px-5 py-2.5 text-xs font-bold font-heading rounded-full bg-[#2E7D32] hover:bg-[#1B5E20] text-white shadow-sm transition-all active:scale-95"
           >
             {actionLabel}
           </button>

@@ -14,28 +14,30 @@ export default function ConfirmDialog({
 }) {
   return (
     <Modal isOpen={isOpen} onClose={onClose} maxWidth="max-w-md" showCloseButton={!isLoading}>
-      <div className="flex flex-col items-center text-center space-y-4 pt-2">
-        <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-          isDestructive ? 'bg-red-100 text-red-600' : 'bg-amber-100 text-amber-600'
+      <div className="flex flex-col items-center text-center space-y-4 pt-1">
+        <div className={`w-14 h-14 rounded-full flex items-center justify-center ${
+          isDestructive
+            ? 'bg-[#FFDAD6] text-[#BA1A1A]'
+            : 'bg-[#FFF8E1] text-[#B78103]'
         }`}>
-          <AlertTriangle className="w-6 h-6 stroke-[2]" />
+          <AlertTriangle className="w-7 h-7 stroke-[2]" />
         </div>
 
-        <div className="space-y-1">
-          <h4 className="text-base font-bold font-heading text-slate-900">
+        <div className="space-y-1.5 px-2">
+          <h4 className="text-lg font-bold font-heading text-[#191C19] tracking-tight">
             {title}
           </h4>
-          <p className="text-xs text-slate-600 font-body leading-relaxed max-w-[40ch]">
+          <p className="text-xs text-[#495348] font-body leading-relaxed max-w-[38ch] mx-auto">
             {message}
           </p>
         </div>
 
-        <div className="w-full flex items-center gap-3 pt-4 border-t border-slate-100">
+        <div className="w-full flex items-center justify-end gap-2.5 pt-4 border-t border-[#E2E8E2]">
           <button
             type="button"
             disabled={isLoading}
             onClick={onClose}
-            className="flex-1 px-4 py-2.5 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-semibold font-heading transition-colors disabled:opacity-50"
+            className="px-5 py-2.5 rounded-full border border-[#C2C9BD] text-[#495348] hover:bg-[#F1F5F1] text-xs font-semibold font-heading transition-colors disabled:opacity-50"
           >
             {cancelLabel}
           </button>
@@ -43,10 +45,10 @@ export default function ConfirmDialog({
             type="button"
             disabled={isLoading}
             onClick={onConfirm}
-            className={`flex-1 px-4 py-2.5 rounded-lg text-white text-xs font-semibold font-heading transition-colors disabled:opacity-50 shadow-xs ${
+            className={`px-6 py-2.5 rounded-full text-white text-xs font-bold font-heading transition-all shadow-sm active:scale-95 disabled:opacity-50 ${
               isDestructive
-                ? 'bg-red-600 hover:bg-red-700 active:bg-red-800'
-                : 'bg-[#2E7D32] hover:bg-[#236327] active:bg-[#1b4d1f]'
+                ? 'bg-[#BA1A1A] hover:bg-[#93000A] active:bg-[#680003]'
+                : 'bg-[#2E7D32] hover:bg-[#1B5E20] active:bg-[#002106]'
             }`}
           >
             {isLoading ? 'Memproses...' : confirmLabel}

@@ -238,39 +238,39 @@ export default function AdminFarmFormPage() {
   });
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto font-body text-slate-800 pb-16">
+    <div className="space-y-6 max-w-5xl mx-auto font-body text-[#191C19] pb-16">
       
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3.5">
           <Link
             to="/admin/farms"
-            className="p-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 transition-colors"
-            title="Kembali"
+            className="p-2.5 rounded-full border border-[#C2C9BD] bg-white hover:bg-[#F1F5F1] text-[#495348] transition-colors"
+            title="Kembali ke Daftar"
           >
             <ArrowLeft className="w-4 h-4" />
           </Link>
           <div>
-            <h1 className="text-xl font-bold font-heading text-slate-900 tracking-tight">
+            <h1 className="text-xl sm:text-2xl font-extrabold font-heading text-[#191C19] tracking-tight">
               {isEditMode ? `Edit: ${existingFarm?.farm_name || 'Peternakan'}` : 'Tambah Peternakan Baru'}
             </h1>
-            <p className="text-xs text-slate-500 mt-0.5">
+            <p className="text-xs text-[#495348] mt-0.5">
               Kelola informasi kandang, koordinat PostGIS, komoditas, dan galeri foto.
             </p>
           </div>
         </div>
       </div>
 
-      {/* Mode Tabs (Only active in Edit Mode) */}
+      {/* Mode Tabs (Only active in Edit Mode) - MD3 Primary Tabs Container */}
       {isEditMode && (
-        <div className="flex border-b border-slate-200 text-xs font-semibold font-heading bg-white rounded-2xl px-6 shadow-xs">
+        <div className="flex flex-wrap items-center gap-2 p-1.5 bg-white border border-[#C2C9BD]/50 rounded-full shadow-2xs text-xs font-semibold font-heading">
           <button
             type="button"
             onClick={() => setActiveTab('general')}
-            className={`py-3.5 border-b-2 transition-colors mr-6 ${
+            className={`px-5 py-2.5 rounded-full transition-all duration-150 ${
               activeTab === 'general'
-                ? 'border-[#2E7D32] text-[#2E7D32]'
-                : 'border-transparent text-slate-500 hover:text-slate-800'
+                ? 'bg-[#2E7D32] text-white shadow-xs font-bold'
+                : 'text-[#495348] hover:text-[#191C19] hover:bg-[#F1F5F1]'
             }`}
           >
             Informasi Umum & Spasial
@@ -278,10 +278,10 @@ export default function AdminFarmFormPage() {
           <button
             type="button"
             onClick={() => setActiveTab('livestock')}
-            className={`py-3.5 border-b-2 transition-colors mr-6 ${
+            className={`px-5 py-2.5 rounded-full transition-all duration-150 ${
               activeTab === 'livestock'
-                ? 'border-[#2E7D32] text-[#2E7D32]'
-                : 'border-transparent text-slate-500 hover:text-slate-800'
+                ? 'bg-[#2E7D32] text-white shadow-xs font-bold'
+                : 'text-[#495348] hover:text-[#191C19] hover:bg-[#F1F5F1]'
             }`}
           >
             Komoditas Ternak ({livestockList.length})
@@ -289,10 +289,10 @@ export default function AdminFarmFormPage() {
           <button
             type="button"
             onClick={() => setActiveTab('photos')}
-            className={`py-3.5 border-b-2 transition-colors ${
+            className={`px-5 py-2.5 rounded-full transition-all duration-150 ${
               activeTab === 'photos'
-                ? 'border-[#2E7D32] text-[#2E7D32]'
-                : 'border-transparent text-slate-500 hover:text-slate-800'
+                ? 'bg-[#2E7D32] text-white shadow-xs font-bold'
+                : 'text-[#495348] hover:text-[#191C19] hover:bg-[#F1F5F1]'
             }`}
           >
             Galeri Foto ({photosList.length})
@@ -303,187 +303,200 @@ export default function AdminFarmFormPage() {
       {/* TAB 1: GENERAL & SPATIAL INFORMATION */}
       {activeTab === 'general' && (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <div className="p-8 rounded-3xl bg-white border border-slate-200/80 shadow-xs space-y-6 text-xs">
-            <h3 className="text-base font-bold font-heading text-slate-900 border-b border-slate-100 pb-3">
-              1. Identitas & Profil Usaha Peternakan
-            </h3>
+          <div className="p-6 sm:p-8 rounded-3xl bg-white border border-[#C2C9BD]/50 shadow-2xs space-y-7 text-xs">
+            
+            {/* Section 1 */}
+            <div className="space-y-4">
+              <h3 className="text-base font-bold font-heading text-[#191C19] border-b border-[#E2E8E2] pb-3 flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-[#2E7D32]"></span>
+                <span>1. Identitas & Profil Usaha Peternakan</span>
+              </h3>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              {/* Farm Name */}
-              <div className="space-y-1.5 md:col-span-2">
-                <label className="font-semibold text-slate-700 block">
-                  Nama Peternakan / Usaha Kandang <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  {...register('farm_name')}
-                  placeholder="Contoh: Peternakan Barokah Jaya"
-                  className="w-full px-3.5 py-2.5 bg-slate-50 rounded-xl border border-slate-200 text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#2E7D32]"
-                />
-                {errors.farm_name && (
-                  <span className="text-red-500 text-[11px] block">{errors.farm_name.message}</span>
-                )}
-              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-1">
+                {/* Farm Name */}
+                <div className="space-y-1.5 md:col-span-2">
+                  <label className="font-bold text-[#191C19] block font-heading">
+                    Nama Peternakan / Usaha Kandang <span className="text-[#BA1A1A]">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    {...register('farm_name')}
+                    placeholder="Contoh: Peternakan Barokah Jaya"
+                    className="w-full px-4 py-2.5 bg-[#F1F5F1]/50 rounded-xl border border-[#C2C9BD] text-[#191C19] placeholder:text-[#495348]/60 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#2E7D32] focus:border-[#2E7D32] transition-all"
+                  />
+                  {errors.farm_name && (
+                    <span className="text-[#BA1A1A] text-[11px] block">{errors.farm_name.message}</span>
+                  )}
+                </div>
 
-              {/* Owner Name */}
-              <div className="space-y-1.5">
-                <label className="font-semibold text-slate-700 block">
-                  Nama Pemilik / Pengelola
-                </label>
-                <input
-                  type="text"
-                  {...register('owner_name')}
-                  placeholder="Contoh: H. Slamet Riyadi"
-                  className="w-full px-3.5 py-2.5 bg-slate-50 rounded-xl border border-slate-200 text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#2E7D32]"
-                />
-              </div>
+                {/* Owner Name */}
+                <div className="space-y-1.5">
+                  <label className="font-bold text-[#191C19] block font-heading">
+                    Nama Pemilik / Pengelola
+                  </label>
+                  <input
+                    type="text"
+                    {...register('owner_name')}
+                    placeholder="Contoh: H. Slamet Riyadi"
+                    className="w-full px-4 py-2.5 bg-[#F1F5F1]/50 rounded-xl border border-[#C2C9BD] text-[#191C19] placeholder:text-[#495348]/60 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#2E7D32] focus:border-[#2E7D32] transition-all"
+                  />
+                </div>
 
-              {/* Phone */}
-              <div className="space-y-1.5">
-                <label className="font-semibold text-slate-700 block">
-                  Nomor Telepon / WhatsApp
-                </label>
-                <input
-                  type="tel"
-                  {...register('phone')}
-                  placeholder="Contoh: 081234567890"
-                  className="w-full px-3.5 py-2.5 bg-slate-50 rounded-xl border border-slate-200 text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#2E7D32]"
-                />
-              </div>
+                {/* Phone */}
+                <div className="space-y-1.5">
+                  <label className="font-bold text-[#191C19] block font-heading">
+                    Nomor Telepon / WhatsApp
+                  </label>
+                  <input
+                    type="tel"
+                    {...register('phone')}
+                    placeholder="Contoh: 081234567890"
+                    className="w-full px-4 py-2.5 bg-[#F1F5F1]/50 rounded-xl border border-[#C2C9BD] text-[#191C19] placeholder:text-[#495348]/60 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#2E7D32] focus:border-[#2E7D32] transition-all"
+                  />
+                </div>
 
-              {/* Category Dropdown */}
-              <div className="space-y-1.5">
-                <label className="font-semibold text-slate-700 block">
-                  Kategori Usaha <span className="text-red-500">*</span>
-                </label>
-                <select
-                  {...register('farm_category_id')}
-                  className="w-full px-3.5 py-2.5 bg-slate-50 rounded-xl border border-slate-200 text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#2E7D32]"
-                >
-                  <option value="">Pilih Kategori</option>
-                  {categories.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.name}
-                    </option>
-                  ))}
-                </select>
-                {errors.farm_category_id && (
-                  <span className="text-red-500 text-[11px] block">{errors.farm_category_id.message}</span>
-                )}
-              </div>
+                {/* Category Dropdown */}
+                <div className="space-y-1.5">
+                  <label className="font-bold text-[#191C19] block font-heading">
+                    Kategori Usaha <span className="text-[#BA1A1A]">*</span>
+                  </label>
+                  <select
+                    {...register('farm_category_id')}
+                    className="w-full px-3.5 py-2.5 bg-[#F1F5F1]/50 rounded-xl border border-[#C2C9BD] text-[#191C19] font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#2E7D32] focus:border-[#2E7D32] transition-all"
+                  >
+                    <option value="">Pilih Kategori</option>
+                    {categories.map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.name}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.farm_category_id && (
+                    <span className="text-[#BA1A1A] text-[11px] block">{errors.farm_category_id.message}</span>
+                  )}
+                </div>
 
-              {/* Scale Dropdown */}
-              <div className="space-y-1.5">
-                <label className="font-semibold text-slate-700 block">
-                  Skala Usaha <span className="text-red-500">*</span>
-                </label>
-                <select
-                  {...register('farm_scale_id')}
-                  className="w-full px-3.5 py-2.5 bg-slate-50 rounded-xl border border-slate-200 text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#2E7D32]"
-                >
-                  <option value="">Pilih Skala Usaha</option>
-                  {scales.map((s) => (
-                    <option key={s.id} value={s.id}>
-                      {s.name}
-                    </option>
-                  ))}
-                </select>
-                {errors.farm_scale_id && (
-                  <span className="text-red-500 text-[11px] block">{errors.farm_scale_id.message}</span>
-                )}
-              </div>
-            </div>
-
-            <h3 className="text-base font-bold font-heading text-slate-900 border-b border-slate-100 pb-3 pt-4">
-              2. Wilayah Administratif & Alamat
-            </h3>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              {/* District */}
-              <div className="space-y-1.5">
-                <label className="font-semibold text-slate-700 block">
-                  Kecamatan <span className="text-red-500">*</span>
-                </label>
-                <select
-                  {...register('district_id')}
-                  className="w-full px-3.5 py-2.5 bg-slate-50 rounded-xl border border-slate-200 text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#2E7D32]"
-                >
-                  <option value="">Pilih Kecamatan</option>
-                  {districtList.map((d) => (
-                    <option key={d.id} value={d.id}>
-                      Kec. {d.name}
-                    </option>
-                  ))}
-                </select>
-                {errors.district_id && (
-                  <span className="text-red-500 text-[11px] block">{errors.district_id.message}</span>
-                )}
-              </div>
-
-              {/* Village Cascading */}
-              <div className="space-y-1.5">
-                <label className="font-semibold text-slate-700 block">
-                  Desa / Pekon
-                </label>
-                <select
-                  {...register('village_id')}
-                  disabled={!selectedDistrictId}
-                  className="w-full px-3.5 py-2.5 bg-slate-50 rounded-xl border border-slate-200 text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#2E7D32] disabled:opacity-50"
-                >
-                  <option value="">Pilih Desa / Pekon</option>
-                  {villageList.map((v) => (
-                    <option key={v.id} value={v.id}>
-                      Pekon {v.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Address Detail */}
-              <div className="space-y-1.5 md:col-span-2">
-                <label className="font-semibold text-slate-700 block">
-                  Alamat Lengkap / RT / RW
-                </label>
-                <input
-                  type="text"
-                  {...register('address')}
-                  placeholder="Contoh: Jl. Ahmad Yani RT 02 RW 01"
-                  className="w-full px-3.5 py-2.5 bg-slate-50 rounded-xl border border-slate-200 text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#2E7D32]"
-                />
-              </div>
-
-              {/* Notes */}
-              <div className="space-y-1.5 md:col-span-2">
-                <label className="font-semibold text-slate-700 block">
-                  Catatan Teknis & Biosekuriti Kandang
-                </label>
-                <textarea
-                  rows={3}
-                  {...register('notes')}
-                  placeholder="Contoh: Kandang close-house dengan sistem desinfektan otomatis..."
-                  className="w-full px-3.5 py-2.5 bg-slate-50 rounded-xl border border-slate-200 text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#2E7D32]"
-                />
+                {/* Scale Dropdown */}
+                <div className="space-y-1.5">
+                  <label className="font-bold text-[#191C19] block font-heading">
+                    Skala Usaha <span className="text-[#BA1A1A]">*</span>
+                  </label>
+                  <select
+                    {...register('farm_scale_id')}
+                    className="w-full px-3.5 py-2.5 bg-[#F1F5F1]/50 rounded-xl border border-[#C2C9BD] text-[#191C19] font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#2E7D32] focus:border-[#2E7D32] transition-all"
+                  >
+                    <option value="">Pilih Skala Usaha</option>
+                    {scales.map((s) => (
+                      <option key={s.id} value={s.id}>
+                        {s.name}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.farm_scale_id && (
+                    <span className="text-[#BA1A1A] text-[11px] block">{errors.farm_scale_id.message}</span>
+                  )}
+                </div>
               </div>
             </div>
 
-            <h3 className="text-base font-bold font-heading text-slate-900 border-b border-slate-100 pb-3 pt-4">
-              3. Geocoding & Koordinat Spasial PostGIS
-            </h3>
+            {/* Section 2 */}
+            <div className="space-y-4 pt-2">
+              <h3 className="text-base font-bold font-heading text-[#191C19] border-b border-[#E2E8E2] pb-3 flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-[#2E7D32]"></span>
+                <span>2. Wilayah Administratif & Alamat</span>
+              </h3>
 
-            {/* Interactive Map Picker */}
-            <MapCoordinatePicker
-              latitude={coordinates.latitude}
-              longitude={coordinates.longitude}
-              onChange={handleCoordinateChange}
-            />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-1">
+                {/* District */}
+                <div className="space-y-1.5">
+                  <label className="font-bold text-[#191C19] block font-heading">
+                    Kecamatan <span className="text-[#BA1A1A]">*</span>
+                  </label>
+                  <select
+                    {...register('district_id')}
+                    className="w-full px-3.5 py-2.5 bg-[#F1F5F1]/50 rounded-xl border border-[#C2C9BD] text-[#191C19] font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#2E7D32] focus:border-[#2E7D32] transition-all"
+                  >
+                    <option value="">Pilih Kecamatan</option>
+                    {districtList.map((d) => (
+                      <option key={d.id} value={d.id}>
+                        Kec. {d.name}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.district_id && (
+                    <span className="text-[#BA1A1A] text-[11px] block">{errors.district_id.message}</span>
+                  )}
+                </div>
+
+                {/* Village Cascading */}
+                <div className="space-y-1.5">
+                  <label className="font-bold text-[#191C19] block font-heading">
+                    Desa / Pekon
+                  </label>
+                  <select
+                    {...register('village_id')}
+                    disabled={!selectedDistrictId}
+                    className="w-full px-3.5 py-2.5 bg-[#F1F5F1]/50 rounded-xl border border-[#C2C9BD] text-[#191C19] font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#2E7D32] focus:border-[#2E7D32] transition-all disabled:opacity-50"
+                  >
+                    <option value="">Pilih Desa / Pekon</option>
+                    {villageList.map((v) => (
+                      <option key={v.id} value={v.id}>
+                        Pekon {v.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Address Detail */}
+                <div className="space-y-1.5 md:col-span-2">
+                  <label className="font-bold text-[#191C19] block font-heading">
+                    Alamat Lengkap / RT / RW
+                  </label>
+                  <input
+                    type="text"
+                    {...register('address')}
+                    placeholder="Contoh: Jl. Ahmad Yani RT 02 RW 01"
+                    className="w-full px-4 py-2.5 bg-[#F1F5F1]/50 rounded-xl border border-[#C2C9BD] text-[#191C19] placeholder:text-[#495348]/60 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#2E7D32] focus:border-[#2E7D32] transition-all"
+                  />
+                </div>
+
+                {/* Notes */}
+                <div className="space-y-1.5 md:col-span-2">
+                  <label className="font-bold text-[#191C19] block font-heading">
+                    Catatan Teknis & Biosekuriti Kandang
+                  </label>
+                  <textarea
+                    rows={3}
+                    {...register('notes')}
+                    placeholder="Contoh: Kandang close-house dengan sistem desinfektan otomatis..."
+                    className="w-full px-4 py-2.5 bg-[#F1F5F1]/50 rounded-xl border border-[#C2C9BD] text-[#191C19] placeholder:text-[#495348]/60 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#2E7D32] focus:border-[#2E7D32] transition-all"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Section 3 */}
+            <div className="space-y-4 pt-2">
+              <h3 className="text-base font-bold font-heading text-[#191C19] border-b border-[#E2E8E2] pb-3 flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-[#2E7D32]"></span>
+                <span>3. Geocoding & Koordinat Spasial PostGIS</span>
+              </h3>
+
+              {/* Interactive Map Picker */}
+              <MapCoordinatePicker
+                latitude={coordinates.latitude}
+                longitude={coordinates.longitude}
+                onChange={handleCoordinateChange}
+              />
+            </div>
 
           </div>
 
           {/* Form Actions */}
-          <div className="flex items-center justify-end gap-3 pt-4">
+          <div className="flex items-center justify-end gap-3 pt-2">
             <Link
               to="/admin/farms"
-              className="px-5 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold font-heading transition-colors"
+              className="px-6 py-2.5 rounded-full border border-[#C2C9BD] bg-white hover:bg-[#F1F5F1] text-[#495348] text-xs font-bold font-heading transition-colors"
             >
               Batal
             </Link>
@@ -491,7 +504,7 @@ export default function AdminFarmFormPage() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#2E7D32] hover:bg-[#236327] active:scale-[0.98] text-white text-xs font-bold font-heading shadow-md transition-colors disabled:opacity-50"
+              className="inline-flex items-center gap-2 px-7 py-2.5 rounded-full bg-[#2E7D32] hover:bg-[#1B5E20] active:scale-[0.98] text-white text-xs font-bold font-heading shadow-sm transition-all disabled:opacity-50"
             >
               <Save className="w-4 h-4" />
               <span>{isSubmitting ? 'Menyimpan...' : 'Simpan Data Peternakan'}</span>
@@ -502,14 +515,14 @@ export default function AdminFarmFormPage() {
 
       {/* TAB 2: LIVESTOCK COMMODITIES SUB-RESOURCE */}
       {activeTab === 'livestock' && isEditMode && (
-        <div className="p-8 rounded-3xl bg-white border border-slate-200/80 shadow-xs space-y-6 text-xs">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+        <div className="p-6 sm:p-8 rounded-3xl bg-white border border-[#C2C9BD]/50 shadow-2xs space-y-6 text-xs">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#E2E8E2] pb-4">
             <div>
-              <h3 className="text-base font-bold font-heading text-slate-900">
+              <h3 className="text-base font-bold font-heading text-[#191C19]">
                 Komoditas Ternak & Populasi
               </h3>
-              <p className="text-xs text-slate-500">
-                Kelola hewan ternak yang dipelihara pada peternakan ini.
+              <p className="text-xs text-[#495348] mt-0.5">
+                Kelola jenis hewan ternak dan populasi yang dipelihara pada peternakan ini.
               </p>
             </div>
 
@@ -519,7 +532,7 @@ export default function AdminFarmFormPage() {
                 setEditingLivestock(null);
                 setLivestockModalOpen(true);
               }}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#2E7D32] hover:bg-[#236327] text-white text-xs font-bold font-heading shadow-xs transition-colors"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#2E7D32] hover:bg-[#1B5E20] text-white text-xs font-bold font-heading shadow-xs transition-all shrink-0"
             >
               <Plus className="w-4 h-4" />
               <span>Tambah Komoditas</span>
@@ -527,37 +540,37 @@ export default function AdminFarmFormPage() {
           </div>
 
           {livestockList.length === 0 ? (
-            <div className="p-8 text-center text-slate-400">
+            <div className="p-12 text-center text-[#495348]">
               Belum ada komoditas ternak yang terdaftar di peternakan ini.
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-xs text-left">
-                <thead className="bg-slate-50 text-slate-500 uppercase font-heading text-[10px] tracking-wider border-b border-slate-200">
+                <thead className="bg-[#F1F5F1]/70 text-[#495348] uppercase font-heading text-[10px] tracking-wider border-b border-[#E2E8E2]">
                   <tr>
-                    <th className="py-3 px-4">Kategori Taksonomi</th>
-                    <th className="py-3 px-4">Jenis Ternak</th>
-                    <th className="py-3 px-4">Ras / Subtipe</th>
-                    <th className="py-3 px-4 text-right">Populasi</th>
-                    <th className="py-3 px-4 text-right">Aksi</th>
+                    <th className="py-3.5 px-4 rounded-l-xl">Kategori Taksonomi</th>
+                    <th className="py-3.5 px-4">Jenis Ternak</th>
+                    <th className="py-3.5 px-4">Ras / Subtipe</th>
+                    <th className="py-3.5 px-4 text-right">Populasi</th>
+                    <th className="py-3.5 px-4 text-right rounded-r-xl">Aksi</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-[#E2E8E2]/60">
                   {livestockList.map((item) => (
-                    <tr key={item.id} className="hover:bg-slate-50/80">
-                      <td className="py-3 px-4 font-bold text-slate-900 font-heading">
+                    <tr key={item.id} className="hover:bg-[#F1F5F1]/40 transition-colors">
+                      <td className="py-3.5 px-4 font-bold text-[#191C19] font-heading">
                         {item.livestock_category?.name || 'Ruminansia'}
                       </td>
-                      <td className="py-3 px-4 font-semibold text-slate-800">
+                      <td className="py-3.5 px-4 font-semibold text-[#191C19]">
                         {item.livestock_type?.name || 'Ternak'}
                       </td>
-                      <td className="py-3 px-4 text-slate-600">
+                      <td className="py-3.5 px-4 text-[#495348]">
                         {item.livestock_subtype?.name || '-'}
                       </td>
-                      <td className="py-3 px-4 text-right font-bold text-[#2E7D32] text-sm">
+                      <td className="py-3.5 px-4 text-right font-bold text-[#2E7D32] text-sm">
                         {item.population?.toLocaleString('id-ID')} ekor
                       </td>
-                      <td className="py-3 px-4 text-right">
+                      <td className="py-3.5 px-4 text-right">
                         <div className="flex items-center justify-end gap-1">
                           <button
                             type="button"
@@ -565,7 +578,7 @@ export default function AdminFarmFormPage() {
                               setEditingLivestock(item);
                               setLivestockModalOpen(true);
                             }}
-                            className="p-1.5 text-slate-400 hover:text-blue-600 transition-colors"
+                            className="p-2 rounded-full text-[#495348] hover:text-[#1565C0] hover:bg-[#E3F2FD] transition-colors"
                             title="Edit Komoditas"
                           >
                             <Edit className="w-3.5 h-3.5" />
@@ -580,7 +593,7 @@ export default function AdminFarmFormPage() {
                                 title: `Hapus ${item.livestock_type?.name || 'Ternak'} (${item.population} ekor)?`,
                               })
                             }
-                            className="p-1.5 text-slate-400 hover:text-red-600 transition-colors"
+                            className="p-2 rounded-full text-[#495348] hover:text-[#BA1A1A] hover:bg-[#FFDAD6]/50 transition-colors"
                             title="Hapus Komoditas"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
@@ -598,13 +611,13 @@ export default function AdminFarmFormPage() {
 
       {/* TAB 3: PHOTOS GALLERY & UPLOAD SUB-RESOURCE */}
       {activeTab === 'photos' && isEditMode && (
-        <div className="p-8 rounded-3xl bg-white border border-slate-200/80 shadow-xs space-y-6 text-xs">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+        <div className="p-6 sm:p-8 rounded-3xl bg-white border border-[#C2C9BD]/50 shadow-2xs space-y-6 text-xs">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#E2E8E2] pb-4">
             <div>
-              <h3 className="text-base font-bold font-heading text-slate-900">
+              <h3 className="text-base font-bold font-heading text-[#191C19]">
                 Galeri Foto Kandang & Fasilitas
               </h3>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-[#495348] mt-0.5">
                 Foto dokumentasi kandang fisik dan sarana pendukung biosekuriti.
               </p>
             </div>
@@ -612,7 +625,7 @@ export default function AdminFarmFormPage() {
             <button
               type="button"
               onClick={() => setPhotoModalOpen(true)}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#2E7D32] hover:bg-[#236327] text-white text-xs font-bold font-heading shadow-xs transition-colors"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#2E7D32] hover:bg-[#1B5E20] text-white text-xs font-bold font-heading shadow-xs transition-all shrink-0"
             >
               <Upload className="w-4 h-4" />
               <span>Unggah Foto Baru</span>
@@ -620,8 +633,10 @@ export default function AdminFarmFormPage() {
           </div>
 
           {photosList.length === 0 ? (
-            <div className="p-12 text-center text-slate-400 space-y-3">
-              <ImageIcon className="w-10 h-10 mx-auto stroke-[1.5]" />
+            <div className="p-12 text-center text-[#495348] space-y-3">
+              <div className="w-14 h-14 rounded-full bg-[#E8EFE8] text-[#2E7D32] flex items-center justify-center mx-auto">
+                <ImageIcon className="w-7 h-7 stroke-[1.8]" />
+              </div>
               <p>Belum ada foto kandang yang diunggah.</p>
             </div>
           ) : (
@@ -629,9 +644,9 @@ export default function AdminFarmFormPage() {
               {photosList.map((photo) => (
                 <div
                   key={photo.id}
-                  className="rounded-2xl border border-slate-200 overflow-hidden bg-slate-50 flex flex-col group"
+                  className="rounded-3xl border border-[#C2C9BD]/50 overflow-hidden bg-white flex flex-col shadow-2xs group hover:shadow-sm transition-all"
                 >
-                  <div className="relative aspect-video overflow-hidden bg-slate-200">
+                  <div className="relative aspect-video overflow-hidden bg-[#F1F5F1]">
                     <img
                       src={getImageUrl(photo.file_path)}
                       alt={photo.caption || 'Foto kandang'}
@@ -641,28 +656,28 @@ export default function AdminFarmFormPage() {
                       }}
                     />
                     {photo.is_primary && (
-                      <span className="absolute top-2 left-2 bg-[#2E7D32] text-white text-[9px] font-bold font-heading uppercase px-2 py-0.5 rounded-full shadow-xs">
+                      <span className="absolute top-3 left-3 bg-[#2E7D32] text-white text-[10px] font-bold font-heading uppercase px-3 py-1 rounded-full shadow-sm">
                         Foto Utama
                       </span>
                     )}
                   </div>
 
-                  <div className="p-3.5 flex-1 flex flex-col justify-between space-y-3">
-                    <p className="text-slate-700 font-medium line-clamp-2">
+                  <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
+                    <p className="text-[#191C19] font-medium line-clamp-2 text-xs">
                       {photo.caption || 'Tanpa keterangan'}
                     </p>
 
-                    <div className="flex items-center justify-between pt-2 border-t border-slate-200/80">
+                    <div className="flex items-center justify-between pt-2 border-t border-[#E2E8E2]">
                       {!photo.is_primary ? (
                         <button
                           type="button"
                           onClick={() => setPrimaryPhotoMutation.mutate(photo.id)}
-                          className="text-[11px] font-semibold text-[#2E7D32] hover:underline"
+                          className="text-[11px] font-bold text-[#2E7D32] hover:text-[#1B5E20] transition-colors"
                         >
                           Jadikan Utama
                         </button>
                       ) : (
-                        <span className="text-[11px] text-slate-400 italic">Foto Utama</span>
+                        <span className="text-[11px] text-[#495348] italic font-medium">Foto Utama</span>
                       )}
 
                       <button
@@ -675,10 +690,10 @@ export default function AdminFarmFormPage() {
                             title: 'Hapus foto ini secara permanen?',
                           })
                         }
-                        className="p-1 text-slate-400 hover:text-red-600 transition-colors"
+                        className="p-1.5 rounded-full text-[#495348] hover:text-[#BA1A1A] hover:bg-[#FFDAD6]/50 transition-colors"
                         title="Hapus Foto"
                       >
-                        <Trash2 className="w-3.5 h-3.5" />
+                        <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
                   </div>
@@ -803,8 +818,8 @@ function LivestockModal({ isOpen, onClose, farmId, initialData, onSuccess }) {
       <form onSubmit={handleSubmit} className="space-y-4 text-xs font-body">
         
         {/* Category */}
-        <div className="space-y-1">
-          <label className="font-semibold text-slate-700 block">Kategori Ternak</label>
+        <div className="space-y-1.5">
+          <label className="font-bold text-[#191C19] block font-heading">Kategori Ternak</label>
           <select
             value={categoryId}
             onChange={(e) => {
@@ -813,7 +828,7 @@ function LivestockModal({ isOpen, onClose, farmId, initialData, onSuccess }) {
               setSubtypeId('');
             }}
             disabled={Boolean(initialData)}
-            className="w-full px-3 py-2 bg-slate-50 rounded-xl border border-slate-200 text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#2E7D32] disabled:opacity-60"
+            className="w-full px-3.5 py-2.5 bg-[#F1F5F1]/50 rounded-xl border border-[#C2C9BD] text-[#191C19] font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#2E7D32] focus:border-[#2E7D32] transition-all disabled:opacity-60"
           >
             <option value="">Pilih Kategori (Ruminansia / Unggas)</option>
             {categories.map((c) => (
@@ -825,8 +840,8 @@ function LivestockModal({ isOpen, onClose, farmId, initialData, onSuccess }) {
         </div>
 
         {/* Type */}
-        <div className="space-y-1">
-          <label className="font-semibold text-slate-700 block">Jenis Ternak *</label>
+        <div className="space-y-1.5">
+          <label className="font-bold text-[#191C19] block font-heading">Jenis Ternak <span className="text-[#BA1A1A]">*</span></label>
           <select
             value={typeId}
             onChange={(e) => {
@@ -834,7 +849,7 @@ function LivestockModal({ isOpen, onClose, farmId, initialData, onSuccess }) {
               setSubtypeId('');
             }}
             disabled={Boolean(initialData)}
-            className="w-full px-3 py-2 bg-slate-50 rounded-xl border border-slate-200 text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#2E7D32] disabled:opacity-60"
+            className="w-full px-3.5 py-2.5 bg-[#F1F5F1]/50 rounded-xl border border-[#C2C9BD] text-[#191C19] font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#2E7D32] focus:border-[#2E7D32] transition-all disabled:opacity-60"
           >
             <option value="">Pilih Jenis Ternak</option>
             {types.map((t) => (
@@ -846,13 +861,13 @@ function LivestockModal({ isOpen, onClose, farmId, initialData, onSuccess }) {
         </div>
 
         {/* Subtype / Breed */}
-        <div className="space-y-1">
-          <label className="font-semibold text-slate-700 block">Ras / Subtipe (Opsional)</label>
+        <div className="space-y-1.5">
+          <label className="font-bold text-[#191C19] block font-heading">Ras / Subtipe (Opsional)</label>
           <select
             value={subtypeId}
             onChange={(e) => setSubtypeId(e.target.value)}
             disabled={!typeId || subtypes.length === 0}
-            className="w-full px-3 py-2 bg-slate-50 rounded-xl border border-slate-200 text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#2E7D32] disabled:opacity-50"
+            className="w-full px-3.5 py-2.5 bg-[#F1F5F1]/50 rounded-xl border border-[#C2C9BD] text-[#191C19] font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#2E7D32] focus:border-[#2E7D32] transition-all disabled:opacity-50"
           >
             <option value="">{subtypes.length === 0 ? 'Tidak ada sub-ras spesifik' : 'Pilih Ras / Subtipe'}</option>
             {subtypes.map((st) => (
@@ -864,29 +879,29 @@ function LivestockModal({ isOpen, onClose, farmId, initialData, onSuccess }) {
         </div>
 
         {/* Population */}
-        <div className="space-y-1">
-          <label className="font-semibold text-slate-700 block">Jumlah Populasi (Ekor) *</label>
+        <div className="space-y-1.5">
+          <label className="font-bold text-[#191C19] block font-heading">Jumlah Populasi (Ekor) <span className="text-[#BA1A1A]">*</span></label>
           <input
             type="number"
             min="1"
             value={population}
             onChange={(e) => setPopulation(e.target.value)}
-            className="w-full px-3 py-2 bg-slate-50 rounded-xl border border-slate-200 text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#2E7D32]"
+            className="w-full px-4 py-2.5 bg-[#F1F5F1]/50 rounded-xl border border-[#C2C9BD] text-[#191C19] font-mono focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#2E7D32] focus:border-[#2E7D32] transition-all"
           />
         </div>
 
-        <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
+        <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-[#E2E8E2]">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs font-semibold transition-colors"
+            className="px-5 py-2.5 rounded-full border border-[#C2C9BD] text-[#495348] hover:bg-[#F1F5F1] text-xs font-bold font-heading transition-colors"
           >
             Batal
           </button>
           <button
             type="submit"
             disabled={isSubmitting}
-            className="px-5 py-2 rounded-lg bg-[#2E7D32] hover:bg-[#236327] text-white text-xs font-bold font-heading transition-colors disabled:opacity-50"
+            className="px-6 py-2.5 rounded-full bg-[#2E7D32] hover:bg-[#1B5E20] text-white text-xs font-bold font-heading transition-all shadow-xs disabled:opacity-50"
           >
             {isSubmitting ? 'Menyimpan...' : 'Simpan Ternak'}
           </button>
@@ -956,58 +971,58 @@ function PhotoUploadModal({ isOpen, onClose, farmId, onSuccess }) {
       <form onSubmit={handleUpload} className="space-y-4 text-xs font-body">
         
         {/* File Input */}
-        <div className="space-y-1">
-          <label className="font-semibold text-slate-700 block">Pilih Berkas Foto (JPG/PNG/WebP, max 5MB)</label>
+        <div className="space-y-1.5">
+          <label className="font-bold text-[#191C19] block font-heading">Pilih Berkas Foto (JPG/PNG/WebP, max 5MB)</label>
           <input
             type="file"
             accept="image/jpeg,image/png,image/webp"
             onChange={handleFileChange}
-            className="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-[#2E7D32] hover:file:bg-emerald-100"
+            className="w-full text-xs text-[#495348] file:mr-3 file:py-2.5 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-[#E8F5E9] file:text-[#1B5E20] hover:file:bg-[#D7F3D6] cursor-pointer"
           />
         </div>
 
         {/* Image Preview */}
         {preview && (
-          <div className="aspect-video rounded-xl overflow-hidden border border-slate-200 bg-slate-100">
+          <div className="aspect-video rounded-2xl overflow-hidden border border-[#C2C9BD]/70 bg-[#F1F5F1]">
             <img src={preview} alt="Preview" className="w-full h-full object-cover" />
           </div>
         )}
 
         {/* Caption */}
-        <div className="space-y-1">
-          <label className="font-semibold text-slate-700 block">Keterangan / Caption Foto</label>
+        <div className="space-y-1.5">
+          <label className="font-bold text-[#191C19] block font-heading">Keterangan / Caption Foto</label>
           <input
             type="text"
             value={caption}
             onChange={(e) => setCaption(e.target.value)}
             placeholder="Contoh: Tampak depan kandang utama"
-            className="w-full px-3 py-2 bg-slate-50 rounded-xl border border-slate-200 text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#2E7D32]"
+            className="w-full px-4 py-2.5 bg-[#F1F5F1]/50 rounded-xl border border-[#C2C9BD] text-[#191C19] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#2E7D32] focus:border-[#2E7D32] transition-all"
           />
         </div>
 
         {/* Primary Toggle */}
-        <label className="flex items-center gap-2 cursor-pointer pt-1">
+        <label className="flex items-center gap-2.5 cursor-pointer pt-1">
           <input
             type="checkbox"
             checked={isPrimary}
             onChange={(e) => setIsPrimary(e.target.checked)}
-            className="rounded border-slate-300 text-[#2E7D32] focus:ring-[#2E7D32] w-4 h-4"
+            className="rounded border-[#C2C9BD] text-[#2E7D32] focus:ring-[#2E7D32] w-4 h-4"
           />
-          <span className="text-slate-700 font-medium">Jadikan Foto Sampul Utama (Primary)</span>
+          <span className="text-[#191C19] font-semibold">Jadikan Foto Sampul Utama (Primary)</span>
         </label>
 
-        <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
+        <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-[#E2E8E2]">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs font-semibold transition-colors"
+            className="px-5 py-2.5 rounded-full border border-[#C2C9BD] text-[#495348] hover:bg-[#F1F5F1] text-xs font-bold font-heading transition-colors"
           >
             Batal
           </button>
           <button
             type="submit"
             disabled={isUploading || !file}
-            className="px-5 py-2 rounded-lg bg-[#2E7D32] hover:bg-[#236327] text-white text-xs font-bold font-heading transition-colors disabled:opacity-50"
+            className="px-6 py-2.5 rounded-full bg-[#2E7D32] hover:bg-[#1B5E20] text-white text-xs font-bold font-heading transition-all shadow-xs disabled:opacity-50"
           >
             {isUploading ? 'Mengunggah...' : 'Unggah Foto'}
           </button>

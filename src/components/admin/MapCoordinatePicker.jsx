@@ -60,19 +60,19 @@ export default function MapCoordinatePicker({
   };
 
   return (
-    <div className="space-y-3 font-body text-xs">
-      <div className="flex items-center justify-between">
-        <label className="font-semibold text-slate-700 flex items-center gap-1.5">
-          <MapPin className="w-3.5 h-3.5 text-[#2E7D32]" />
+    <div className="space-y-3.5 font-body text-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+        <label className="font-bold text-[#191C19] flex items-center gap-1.5 font-heading">
+          <MapPin className="w-4 h-4 text-[#2E7D32]" />
           <span>Titik Koordinat Spasial (PostGIS Point SRID 4326)</span>
         </label>
-        <span className="text-[11px] text-slate-400">
+        <span className="text-[11px] text-[#495348]">
           Klik pada peta atau geser pin merah untuk menentukan posisi kandang
         </span>
       </div>
 
       {/* Map Container */}
-      <div className="h-[280px] w-full rounded-2xl overflow-hidden border border-slate-200 shadow-inner relative z-0">
+      <div className="h-[280px] w-full rounded-2xl overflow-hidden border border-[#C2C9BD]/70 shadow-xs relative z-0">
         <MapContainer
           center={position}
           zoom={12}
@@ -93,33 +93,34 @@ export default function MapCoordinatePicker({
         </MapContainer>
 
         {/* Floating Hint Overlay */}
-        <div className="absolute top-2 left-2 z-[400] bg-white/90 backdrop-blur-xs px-2.5 py-1 rounded-lg border border-slate-200 text-[10px] font-medium text-slate-700 shadow-xs pointer-events-none">
-          📍 Klik peta untuk meletakkan pin
+        <div className="absolute top-3 left-3 z-[400] bg-white/95 backdrop-blur-xs px-3 py-1.5 rounded-full border border-[#C2C9BD]/60 text-[10px] font-bold font-heading text-[#191C19] shadow-sm pointer-events-none flex items-center gap-1.5">
+          <span>📍</span>
+          <span>Klik peta untuk meletakkan pin koordinat</span>
         </div>
       </div>
 
       {/* Manual Input Readout / Coordinate inputs */}
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
         <div className="space-y-1">
-          <span className="text-[11px] text-slate-500 font-semibold block">Latitude (Lintang)</span>
+          <span className="text-[11px] text-[#495348] font-bold font-heading block">Latitude (Lintang)</span>
           <input
             type="number"
             step="any"
             value={latitude || ''}
             onChange={(e) => handleManualInput(e.target.value, longitude)}
             placeholder="-5.358200"
-            className="w-full px-3 py-2 bg-slate-50 rounded-xl border border-slate-200 text-slate-800 font-mono focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#2E7D32]"
+            className="w-full px-4 py-2.5 bg-[#F1F5F1]/50 rounded-xl border border-[#C2C9BD] text-[#191C19] font-mono text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#2E7D32] focus:border-[#2E7D32] transition-all"
           />
         </div>
         <div className="space-y-1">
-          <span className="text-[11px] text-slate-500 font-semibold block">Longitude (Bujur)</span>
+          <span className="text-[11px] text-[#495348] font-bold font-heading block">Longitude (Bujur)</span>
           <input
             type="number"
             step="any"
             value={longitude || ''}
             onChange={(e) => handleManualInput(latitude, e.target.value)}
             placeholder="104.974900"
-            className="w-full px-3 py-2 bg-slate-50 rounded-xl border border-slate-200 text-slate-800 font-mono focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#2E7D32]"
+            className="w-full px-4 py-2.5 bg-[#F1F5F1]/50 rounded-xl border border-[#C2C9BD] text-[#191C19] font-mono text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#2E7D32] focus:border-[#2E7D32] transition-all"
           />
         </div>
       </div>

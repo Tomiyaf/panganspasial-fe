@@ -6,21 +6,21 @@ export default function ErrorState({
   onRetry,
 }) {
   return (
-    <div className="flex flex-col items-center justify-center p-8 text-center bg-red-50/50 rounded-2xl border border-red-200/80 shadow-xs">
-      <div className="w-11 h-11 rounded-xl bg-red-100 text-red-600 flex items-center justify-center mb-3">
+    <div className="flex flex-col items-center justify-center p-8 text-center bg-[#FFDAD6]/30 rounded-3xl border border-[#FFDAD6] shadow-xs">
+      <div className="w-12 h-12 rounded-full bg-[#FFDAD6] text-[#BA1A1A] flex items-center justify-center mb-3">
         <AlertCircle className="w-6 h-6 stroke-[1.8]" />
       </div>
-      <h4 className="text-sm font-bold font-heading text-slate-900">
+      <h4 className="text-sm font-bold font-heading text-[#410002]">
         {title}
       </h4>
-      <p className="text-xs text-slate-600 font-body max-w-sm mt-1 leading-relaxed">
+      <p className="text-xs text-[#410002]/80 font-body max-w-sm mt-1 leading-relaxed">
         {message}
       </p>
       {onRetry && (
         <button
           type="button"
           onClick={onRetry}
-          className="mt-4 inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold font-heading rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors shadow-xs"
+          className="mt-4 inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold font-heading rounded-full bg-white border border-[#C2C9BD] text-[#191C19] hover:bg-[#F1F5F1] transition-all shadow-xs active:scale-95"
         >
           <RotateCcw className="w-3.5 h-3.5" />
           <span>Coba Lagi</span>

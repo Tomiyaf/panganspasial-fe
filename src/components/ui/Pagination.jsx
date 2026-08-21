@@ -13,11 +13,11 @@ export default function Pagination({
   const endItem = Math.min(currentPage * limit, totalItems);
 
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-6 py-4 border-t border-slate-100 bg-white text-xs text-slate-600 font-body">
+    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-6 py-4 border-t border-[#E2E8E2] bg-white text-xs text-[#495348] font-body">
       <div>
-        Menampilkan <span className="font-semibold text-slate-900">{startItem}</span> -{' '}
-        <span className="font-semibold text-slate-900">{endItem}</span> dari{' '}
-        <span className="font-semibold text-slate-900">{totalItems}</span> data
+        Menampilkan <span className="font-bold text-[#191C19]">{startItem}</span> -{' '}
+        <span className="font-bold text-[#191C19]">{endItem}</span> dari{' '}
+        <span className="font-bold text-[#191C19]">{totalItems}</span> data
       </div>
 
       <div className="flex items-center gap-1.5">
@@ -25,21 +25,21 @@ export default function Pagination({
           type="button"
           disabled={currentPage <= 1}
           onClick={() => onPageChange(currentPage - 1)}
-          className="p-1.5 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+          className="w-8 h-8 rounded-full border border-[#C2C9BD] text-[#495348] hover:bg-[#F1F5F1] hover:text-[#191C19] flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
           aria-label="Halaman sebelumnya"
         >
           <ChevronLeft className="w-4 h-4" />
         </button>
 
-        <span className="px-3 py-1 font-medium text-slate-700">
-          Hal. {currentPage} dari {Math.max(1, totalPages)}
+        <span className="px-3.5 py-1 rounded-full bg-[#F1F5F1] font-semibold text-[#191C19] text-xs">
+          Hal. {currentPage} / {Math.max(1, totalPages)}
         </span>
 
         <button
           type="button"
           disabled={currentPage >= totalPages}
           onClick={() => onPageChange(currentPage + 1)}
-          className="p-1.5 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+          className="w-8 h-8 rounded-full border border-[#C2C9BD] text-[#495348] hover:bg-[#F1F5F1] hover:text-[#191C19] flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
           aria-label="Halaman selanjutnya"
         >
           <ChevronRight className="w-4 h-4" />
