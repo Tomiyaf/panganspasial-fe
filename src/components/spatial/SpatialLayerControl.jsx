@@ -44,6 +44,16 @@ export default function SpatialLayerControl({
               </label>
 
               <label className="flex items-center justify-between p-2.5 rounded-xl hover:bg-[#F1F5F1] cursor-pointer transition-colors">
+                <span className="font-semibold text-[#191C19]">Batas Wilayah Desa / Pekon</span>
+                <input
+                  type="checkbox"
+                  checked={layers.villages}
+                  onChange={() => onToggleLayer('villages')}
+                  className="rounded border-[#C2C9BD] text-[#2E7D32] focus:ring-[#2E7D32] w-4 h-4"
+                />
+              </label>
+
+              <label className="flex items-center justify-between p-2.5 rounded-xl hover:bg-[#F1F5F1] cursor-pointer transition-colors">
                 <span className="font-semibold text-[#191C19]">Batas Wilayah Kecamatan</span>
                 <input
                   type="checkbox"

@@ -1,7 +1,8 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { MapContainer, TileLayer, GeoJSON, Marker, Popup, ZoomControl, useMap } from 'react-leaflet';
 import L from 'leaflet';
+import * as turf from '@turf/turf';
 import { Filter, RotateCcw, ArrowRight } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { spatialApi } from '../services/api';
@@ -34,8 +35,39 @@ const createMarkerIcon = (colorHex) => {
 };
 
 const greenMarker = createMarkerIcon('#2E7D32');
-const blueMarker = createMarkerIcon('#1565C0');
-const amberMarker = createMarkerIcon('#F9A825');
+const amberMarker = createMarkerIcon('#D97706');
+const orangeMarker = createMarkerIcon('#E65100');
+
+// Vibrant & distinguishable thematic color palette for village polygons
+const VILLAGE_COLOR_PALETTE = [
+  { fill: '#10B981', stroke: '#047857' }, // Emerald Green
+  { fill: '#3B82F6', stroke: '#1D4ED8' }, // Ocean Blue
+  { fill: '#F59E0B', stroke: '#D97706' }, // Warm Amber
+  { fill: '#8B5CF6', stroke: '#6D28D9' }, // Violet Purple
+  { fill: '#EC4899', stroke: '#BE185D' }, // Vivid Pink
+  { fill: '#14B8A6', stroke: '#0F766E' }, // Teal
+  { fill: '#F97316', stroke: '#C2410C' }, // Tangerine Orange
+  { fill: '#6366F1', stroke: '#4338CA' }, // Indigo
+  { fill: '#84CC16', stroke: '#4D7C0F' }, // Lime Green
+  { fill: '#06B6D4', stroke: '#0E7490' }, // Cyan
+  { fill: '#A855F7', stroke: '#7E22CE' }, // Purple
+  { fill: '#E11D48', stroke: '#9F1239' }, // Crimson Rose
+  { fill: '#059669', stroke: '#064E3B' }, // Forest Green
+  { fill: '#D97706', stroke: '#92400E' }, // Dark Amber
+  { fill: '#0284C7', stroke: '#0369A1' }, // Sky Blue
+  { fill: '#4F46E5', stroke: '#3730A3' }, // Deep Indigo
+];
+
+const getVillagePalette = (identifier) => {
+  if (!identifier) return VILLAGE_COLOR_PALETTE[0];
+  let hash = 0;
+  const str = String(identifier);
+  for (let i = 0; i < str.length; i++) {
+    hash = str.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const index = Math.abs(hash) % VILLAGE_COLOR_PALETTE.length;
+  return VILLAGE_COLOR_PALETTE[index];
+};
 
 export default function SpasialPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -44,10 +76,11 @@ export default function SpasialPage() {
   const [selectedFarmId, setSelectedFarmId] = useState(() => searchParams.get('id') || null);
   const [targetLocation, setTargetLocation] = useState(null);
 
-  // Active Map Layers
+  // Active Map Layers (Desa/Pekon is the primary boundary layer)
   const [activeLayers, setActiveLayers] = useState({
     farms: true,
-    districts: true,
+    villages: true,
+    districts: false,
     heatmap: false,
   });
 
@@ -58,12 +91,30 @@ export default function SpasialPage() {
   const [filters, setFilters] = useState({
     search: searchParams.get('search') || '',
     district_id: searchParams.get('district_id') || '',
-    village_id: '',
+    village_id: searchParams.get('village_id') || '',
     farm_category_id: '',
     farm_scale_id: '',
     livestock_category_id: '',
     livestock_type_id: '',
   });
+
+  // Sync searchParams from URL to state when query params change
+  useEffect(() => {
+    const urlFarmId = searchParams.get('id');
+    const urlDistrictId = searchParams.get('district_id') || '';
+    const urlVillageId = searchParams.get('village_id') || '';
+    const urlSearch = searchParams.get('search') || '';
+
+    if (urlFarmId) {
+      setSelectedFarmId(urlFarmId);
+    }
+    setFilters((prev) => ({
+      ...prev,
+      district_id: urlDistrictId,
+      village_id: urlVillageId,
+      search: urlSearch,
+    }));
+  }, [searchParams]);
 
   const handleFilterChange = (key, value) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
@@ -82,7 +133,20 @@ export default function SpasialPage() {
     setSearchParams({});
   };
 
-  // 1. Fetch District Boundaries GeoJSON
+  // 1. Fetch Village Boundaries GeoJSON (Primary Boundary Layer)
+  const { data: villagesGeoJSON } = useQuery({
+    queryKey: ['spatial', 'villages', filters.district_id],
+    queryFn: async () => {
+      const res = await spatialApi.getVillagesGeoJSON(
+        filters.district_id ? { district_id: filters.district_id } : {}
+      );
+      return res;
+    },
+    staleTime: 1000 * 60 * 30,
+    enabled: activeLayers.villages,
+  });
+
+  // 1b. Fetch District Boundaries GeoJSON (Secondary/Optional Boundary Layer)
   const { data: districtsGeoJSON } = useQuery({
     queryKey: ['spatial', 'districts', 'all'],
     queryFn: async () => {
@@ -90,6 +154,7 @@ export default function SpasialPage() {
       return res;
     },
     staleTime: 1000 * 60 * 30,
+    enabled: activeLayers.districts,
   });
 
   // 2. Fetch Farms GeoJSON with Filters
@@ -128,6 +193,38 @@ export default function SpasialPage() {
     return farmsGeoJSON?.features || [];
   }, [farmsGeoJSON]);
 
+  // Auto-focus map when a village is selected from filter
+  useEffect(() => {
+    if (filters.village_id && villagesGeoJSON?.features?.length) {
+      const selectedFeature = villagesGeoJSON.features.find(
+        (f) => String(f.properties?.id || f.id) === String(filters.village_id)
+      );
+      if (selectedFeature?.geometry) {
+        try {
+          const bbox = turf.bbox(selectedFeature); // [minLng, minLat, maxLng, maxLat]
+          const centerLat = (bbox[1] + bbox[3]) / 2;
+          const centerLng = (bbox[0] + bbox[2]) / 2;
+          setTargetLocation([centerLat, centerLng]);
+        } catch (err) {
+          console.warn('Could not calculate village centroid:', err);
+        }
+      }
+    }
+  }, [filters.village_id, villagesGeoJSON]);
+
+  // Auto-focus and open farm drawer when URL or state has selectedFarmId
+  useEffect(() => {
+    if (selectedFarmId && farmFeatures.length > 0) {
+      const match = farmFeatures.find(
+        (f) => String(f.properties?.id || f.id) === String(selectedFarmId)
+      );
+      if (match?.geometry?.coordinates) {
+        const [lng, lat] = match.geometry.coordinates;
+        setTargetLocation([lat, lng]);
+      }
+    }
+  }, [selectedFarmId, farmFeatures]);
+
   const handleSelectFarm = (id, lat, lng) => {
     setSelectedFarmId(id);
     if (lat && lng) {
@@ -136,7 +233,7 @@ export default function SpasialPage() {
   };
 
   const basemapUrls = {
-    voyager: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+    voyager: import.meta.env.VITE_MAP_TILE_URL,
     satellite: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
     osm: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
   };
@@ -145,7 +242,7 @@ export default function SpasialPage() {
     <div className="relative w-full h-[100dvh] overflow-hidden bg-[#F8FAF8] flex flex-col pt-20">
       {/* Top Floating Control Bar - MD3 Pill Action Bar */}
       <div className="absolute top-24 left-4 right-4 z-[800] flex items-center justify-between pointer-events-none">
-        
+
         {/* Left Side: Filter Trigger & Quick Stats */}
         <div className="flex items-center gap-2.5 pointer-events-auto relative">
           <button
@@ -222,22 +319,94 @@ export default function SpasialPage() {
             url={basemapUrls[activeBasemap]}
           />
 
-          {/* Layer 1: Administrative Boundaries (Districts) */}
+          {/* Layer 1: Administrative Boundaries (Desa / Pekon) */}
+          {activeLayers.villages && villagesGeoJSON && (
+            <GeoJSON
+              key={`villages-${JSON.stringify(villagesGeoJSON)}`}
+              data={villagesGeoJSON}
+              style={(feature) => {
+                const name = feature?.properties?.name || feature?.id || 'Desa';
+                const isSelected =
+                  filters.village_id &&
+                  String(feature?.properties?.id) === String(filters.village_id);
+                const palette = getVillagePalette(name);
+
+                return {
+                  color: palette.stroke,
+                  weight: isSelected ? 3.5 : 2,
+                  fillColor: palette.fill,
+                  fillOpacity: isSelected ? 0.45 : 0.22,
+                  dashArray: isSelected ? undefined : '4, 4',
+                };
+              }}
+              onEachFeature={(feature, layer) => {
+                const name = feature.properties?.name || feature.properties?.village_name || 'Pekon/Desa';
+                const district = feature.properties?.district_name || 'Adiluwih';
+                const totalFarms = feature.properties?.total_farms || 0;
+                const totalPop = feature.properties?.total_population || 0;
+                const palette = getVillagePalette(name);
+
+                layer.bindTooltip(
+                  `<div class="space-y-1">
+                    <div class="flex items-center gap-1.5">
+                      <span class="w-2.5 h-2.5 rounded-full inline-block shrink-0 shadow-xs" style="background-color: ${palette.fill}; border: 1px solid ${palette.stroke}"></span>
+                      <span class="text-[10px] font-bold uppercase tracking-wider text-[#495348] font-heading">Pekon / Desa</span>
+                    </div>
+                    <div class="text-xs font-black font-heading text-[#191C19]">${name}</div>
+                    <div class="text-[11px] text-[#495348] border-t border-[#C2C9BD]/50 pt-1 mt-1 flex flex-col gap-0.5">
+                      <span>Kecamatan: <b class="text-[#191C19]">${district}</b></span>
+                      <span>Kandang Terdata: <b class="text-[#2E7D32]">${totalFarms} Unit</b></span>
+                      <span>Populasi Ternak: <b class="text-[#191C19]">${Number(totalPop).toLocaleString('id-ID')} Ekor</b></span>
+                    </div>
+                  </div>`,
+                  { sticky: true, className: 'custom-leaflet-tooltip' }
+                );
+
+                layer.on({
+                  mouseover: (e) => {
+                    const l = e.target;
+                    l.setStyle({
+                      fillOpacity: 0.5,
+                      weight: 3.5,
+                    });
+                  },
+                  mouseout: (e) => {
+                    const l = e.target;
+                    const isSelected =
+                      filters.village_id &&
+                      String(feature?.properties?.id) === String(filters.village_id);
+                    l.setStyle({
+                      fillOpacity: isSelected ? 0.45 : 0.22,
+                      weight: isSelected ? 3.5 : 2,
+                      color: palette.stroke,
+                    });
+                  },
+                  click: () => {
+                    if (feature.properties?.id) {
+                      handleFilterChange('village_id', String(feature.properties.id));
+                    }
+                  },
+                });
+              }}
+            />
+          )}
+
+          {/* Layer 1b: Optional Administrative Boundaries (Districts / Kecamatan) */}
           {activeLayers.districts && districtsGeoJSON && (
             <GeoJSON
-              key={JSON.stringify(districtsGeoJSON)}
+              key={`districts-${JSON.stringify(districtsGeoJSON)}`}
               data={districtsGeoJSON}
               style={() => ({
-                color: '#2E7D32',
+                color: '#1565C0',
                 weight: 2,
-                fillColor: '#2E7D32',
-                fillOpacity: 0.06,
-                dashArray: '4, 4',
+                fillColor: '#1565C0',
+                fillOpacity: 0.04,
+                dashArray: '6, 6',
               })}
               onEachFeature={(feature, layer) => {
                 const name = feature.properties?.name || feature.properties?.district_name || 'Kecamatan';
                 layer.bindTooltip(
-                  `<div class="text-xs font-bold font-heading text-[#191C19]">Kecamatan ${name}</div>`,
+                  `<div class="text-xs font-bold font-heading text-[#1565C0]">Kecamatan ${name}</div>`,
                   { sticky: true, className: 'custom-leaflet-tooltip' }
                 );
               }}
@@ -262,8 +431,8 @@ export default function SpasialPage() {
                 props.scale === 'Besar'
                   ? greenMarker
                   : props.scale === 'Sedang'
-                  ? blueMarker
-                  : amberMarker;
+                  ? amberMarker
+                  : orangeMarker;
 
               return (
                 <Marker
@@ -306,17 +475,6 @@ export default function SpasialPage() {
                             </span>
                           </div>
                         )}
-                      </div>
-
-                      <div className="pt-2">
-                        <button
-                          type="button"
-                          onClick={() => handleSelectFarm(props.id, lat, lng)}
-                          className="w-full inline-flex items-center justify-center gap-1.5 px-4 py-2 text-xs font-bold font-heading rounded-full bg-[#2E7D32] text-white hover:bg-[#1B5E20] transition-colors shadow-2xs"
-                        >
-                          <span>Buka Detail Lengkap</span>
-                          <ArrowRight className="w-3 h-3" />
-                        </button>
                       </div>
                     </div>
                   </Popup>

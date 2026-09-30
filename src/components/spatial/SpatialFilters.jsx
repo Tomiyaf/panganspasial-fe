@@ -104,26 +104,24 @@ export default function SpatialFilters({
           </select>
         </div>
 
-        {/* Village / Pekon Filter (Cascading) */}
-        {filters.district_id && villageList.length > 0 && (
-          <div className="space-y-1.5">
-            <label className="font-bold text-[#191C19] block font-heading">
-              Desa / Pekon
-            </label>
-            <select
-              value={filters.village_id || ''}
-              onChange={(e) => onFilterChange('village_id', e.target.value)}
-              className="w-full px-3.5 py-2.5 text-xs bg-[#F1F5F1]/50 rounded-xl border border-[#C2C9BD] text-[#191C19] font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#2E7D32] focus:border-[#2E7D32] transition-all cursor-pointer"
-            >
-              <option value="">Semua Desa / Pekon</option>
-              {villageList.map((v) => (
-                <option key={v.id} value={v.id}>
-                  {v.name}
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
+        {/* Village / Pekon Filter */}
+        <div className="space-y-1.5">
+          <label className="font-bold text-[#191C19] block font-heading">
+            Pekon / Desa
+          </label>
+          <select
+            value={filters.village_id || ''}
+            onChange={(e) => onFilterChange('village_id', e.target.value)}
+            className="w-full px-3.5 py-2.5 text-xs bg-[#F1F5F1]/50 rounded-xl border border-[#C2C9BD] text-[#191C19] font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#2E7D32] focus:border-[#2E7D32] transition-all cursor-pointer"
+          >
+            <option value="">Semua Pekon / Desa {villageList.length > 0 ? `(${villageList.length})` : ''}</option>
+            {villageList.map((v) => (
+              <option key={v.id} value={v.id}>
+                {v.name} {!filters.district_id && v.district_name ? `(Kec. ${v.district_name})` : ''}
+              </option>
+            ))}
+          </select>
+        </div>
 
         {/* Farm Category */}
         <div className="space-y-1.5">

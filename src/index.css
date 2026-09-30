@@ -91,6 +91,53 @@
   background: #ffffff;
 }
 
+/* Ensure Leaflet popups and links don't inherit default blue color */
+.leaflet-container a {
+  color: inherit;
+}
+
+.custom-popup a,
+.custom-popup a span,
+.custom-popup a svg,
+.custom-popup a:hover,
+.custom-popup a:focus,
+.custom-popup a:visited,
+.custom-popup button,
+.custom-popup button span,
+.custom-popup button svg {
+  color: #ffffff !important;
+  text-decoration: none !important;
+}
+
+/* Custom Leaflet Tooltip Styling */
+.custom-leaflet-tooltip {
+  background: rgba(255, 255, 255, 0.96) !important;
+  backdrop-filter: blur(8px) !important;
+  border: 1px solid #C2C9BD !important;
+  border-radius: 12px !important;
+  padding: 8px 12px !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+  color: #191C19 !important;
+  font-family: var(--font-body) !important;
+}
+
+.custom-leaflet-tooltip::before {
+  border-top-color: #C2C9BD !important;
+}
+
+/* Remove default browser focus/selection outline on Leaflet interactive paths/polygons */
+.leaflet-container path:focus,
+.leaflet-container path:focus-visible,
+.leaflet-container svg:focus,
+.leaflet-container svg:focus-visible,
+.leaflet-interactive:focus,
+.leaflet-interactive:focus-visible,
+path.leaflet-interactive:focus,
+path.leaflet-interactive:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
 /* Animated GIS Pattern Overlay */
 .gis-grid-pattern {
   background-image: radial-gradient(rgba(46, 125, 50, 0.18) 1px, transparent 1px);
