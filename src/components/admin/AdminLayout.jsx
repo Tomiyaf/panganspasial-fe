@@ -32,7 +32,7 @@ export default function AdminLayout() {
       group: 'Data & Spasial',
       items: [
         { name: 'Data Peternakan', path: '/admin/farms', icon: Building2 },
-        { name: 'Validasi Survei', path: '/admin/validations', icon: CheckSquare },
+        // { name: 'Validasi Survei', path: '/admin/validations', icon: CheckSquare },
         { name: 'SDSS Multikriteria', path: '/admin/sdss', icon: Calculator },
       ],
     },
@@ -60,10 +60,10 @@ export default function AdminLayout() {
 
   return (
     <div className="min-h-screen bg-[#F8FAF8] flex font-body text-[#191C19] selection:bg-[#2E7D32] selection:text-white">
-      
+
       {/* Desktop MD3 Tonal Navigation Drawer */}
       <aside className="hidden lg:flex flex-col w-72 bg-[#F1F5F1] text-[#191C19] border-r border-[#C2C9BD]/50 shrink-0 select-none">
-        
+
         {/* Drawer Header */}
         <div className="h-20 px-6 flex items-center gap-3.5 border-b border-[#E2E8E2]">
           <div className="w-10 h-10 rounded-2xl bg-[#2E7D32] text-white flex items-center justify-center shadow-xs">
@@ -215,10 +215,10 @@ export default function AdminLayout() {
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0 overflow-x-hidden">
-        
+
         {/* Top Header Bar */}
         <header className="h-16 bg-white border-b border-[#E2E8E2] px-6 lg:px-8 flex items-center justify-between shrink-0 shadow-2xs">
-          
+
           <div className="flex items-center gap-3">
             <button
               onClick={() => setMobileSidebarOpen(true)}

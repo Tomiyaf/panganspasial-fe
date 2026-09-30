@@ -107,7 +107,7 @@ export default function AdminFarmFormPage() {
   })) || [];
 
   // Fetch Existing Farm Detail for Edit
-  const { data: existingFarm } = useQuery({
+  const { data: existingFarm, isLoading: isFarmLoading } = useQuery({
     queryKey: ['admin', 'farms', 'detail', id],
     queryFn: async () => {
       const res = await farmsApi.getAdminFarmById(id);
@@ -139,27 +139,81 @@ export default function AdminFarmFormPage() {
   // Populate form in edit mode
   useEffect(() => {
     if (existingFarm) {
+      const categoryId = String(
+        existingFarm.category?.id ||
+        existingFarm.farm_category?.id ||
+        existingFarm.farm_category_id ||
+        existingFarm.category_id ||
+        ''
+      );
+      const scaleId = String(
+        existingFarm.scale?.id ||
+        existingFarm.farm_scale?.id ||
+        existingFarm.farm_scale_id ||
+        existingFarm.scale_id ||
+        ''
+      );
+      const districtId = String(
+        existingFarm.district?.id ||
+        existingFarm.district_id ||
+        ''
+      );
+      const villageId = String(
+        existingFarm.village?.id ||
+        existingFarm.village_id ||
+        ''
+      );
+
       reset({
         farm_name: existingFarm.farm_name || '',
         owner_name: existingFarm.owner_name || '',
         address: existingFarm.address || '',
         phone: existingFarm.phone || '',
         notes: existingFarm.notes || '',
-        district_id: String(existingFarm.district?.id || existingFarm.district_id || ''),
-        village_id: String(existingFarm.village?.id || existingFarm.village_id || ''),
-        farm_category_id: String(existingFarm.farm_category?.id || existingFarm.farm_category_id || ''),
-        farm_scale_id: String(existingFarm.farm_scale?.id || existingFarm.farm_scale_id || ''),
-        latitude: existingFarm.latitude || -5.3582,
-        longitude: existingFarm.longitude || 104.9749,
+        district_id: districtId,
+        village_id: villageId,
+        farm_category_id: categoryId,
+        farm_scale_id: scaleId,
+        latitude: existingFarm.latitude != null ? Number(existingFarm.latitude) : -5.3582,
+        longitude: existingFarm.longitude != null ? Number(existingFarm.longitude) : 104.9749,
       });
-      if (existingFarm.latitude && existingFarm.longitude) {
+
+      if (existingFarm.latitude != null && existingFarm.longitude != null) {
         setCoordinates({
-          latitude: existingFarm.latitude,
-          longitude: existingFarm.longitude,
+          latitude: Number(existingFarm.latitude),
+          longitude: Number(existingFarm.longitude),
         });
       }
     }
   }, [existingFarm, reset]);
+
+  // Synchronize village selection once villageList finishes loading in edit mode
+  useEffect(() => {
+    if (existingFarm && villageList.length > 0) {
+      const targetVillageId = String(
+        existingFarm.village?.id ||
+        existingFarm.village_id ||
+        ''
+      );
+      const targetDistrictId = String(
+        existingFarm.district?.id ||
+        existingFarm.district_id ||
+        ''
+      );
+      const currentDistrictId = watch('district_id');
+      const currentVillageId = watch('village_id');
+
+      if (
+        currentDistrictId === targetDistrictId &&
+        targetVillageId &&
+        (!currentVillageId || currentVillageId === '')
+      ) {
+        if (villageList.some((v) => String(v.id) === targetVillageId)) {
+          setValue('village_id', targetVillageId);
+        }
+      }
+    }
+  }, [existingFarm, villageList, selectedDistrictId, setValue, watch]);
 
   const handleCoordinateChange = (lat, lng) => {
     setCoordinates({ latitude: lat, longitude: lng });
@@ -302,7 +356,24 @@ export default function AdminFarmFormPage() {
 
       {/* TAB 1: GENERAL & SPATIAL INFORMATION */}
       {activeTab === 'general' && (
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        isEditMode && isFarmLoading ? (
+          <div className="p-6 sm:p-8 rounded-3xl bg-white border border-[#C2C9BD]/50 shadow-2xs space-y-6 animate-pulse">
+            <div className="h-6 bg-[#E2E8E2] rounded-xl w-1/3"></div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div className="h-10 bg-[#F1F5F1] rounded-xl md:col-span-2"></div>
+              <div className="h-10 bg-[#F1F5F1] rounded-xl"></div>
+              <div className="h-10 bg-[#F1F5F1] rounded-xl"></div>
+              <div className="h-10 bg-[#F1F5F1] rounded-xl"></div>
+              <div className="h-10 bg-[#F1F5F1] rounded-xl"></div>
+            </div>
+            <div className="h-6 bg-[#E2E8E2] rounded-xl w-1/3 mt-6"></div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div className="h-10 bg-[#F1F5F1] rounded-xl"></div>
+              <div className="h-10 bg-[#F1F5F1] rounded-xl"></div>
+            </div>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="p-6 sm:p-8 rounded-3xl bg-white border border-[#C2C9BD]/50 shadow-2xs space-y-7 text-xs">
             
             {/* Section 1 */}
@@ -362,11 +433,12 @@ export default function AdminFarmFormPage() {
                   </label>
                   <select
                     {...register('farm_category_id')}
+                    value={watch('farm_category_id') || ''}
                     className="w-full px-3.5 py-2.5 bg-[#F1F5F1]/50 rounded-xl border border-[#C2C9BD] text-[#191C19] font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#2E7D32] focus:border-[#2E7D32] transition-all"
                   >
                     <option value="">Pilih Kategori</option>
                     {categories.map((c) => (
-                      <option key={c.id} value={c.id}>
+                      <option key={c.id} value={String(c.id)}>
                         {c.name}
                       </option>
                     ))}
@@ -383,11 +455,12 @@ export default function AdminFarmFormPage() {
                   </label>
                   <select
                     {...register('farm_scale_id')}
+                    value={watch('farm_scale_id') || ''}
                     className="w-full px-3.5 py-2.5 bg-[#F1F5F1]/50 rounded-xl border border-[#C2C9BD] text-[#191C19] font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#2E7D32] focus:border-[#2E7D32] transition-all"
                   >
                     <option value="">Pilih Skala Usaha</option>
                     {scales.map((s) => (
-                      <option key={s.id} value={s.id}>
+                      <option key={s.id} value={String(s.id)}>
                         {s.name}
                       </option>
                     ))}
@@ -414,11 +487,16 @@ export default function AdminFarmFormPage() {
                   </label>
                   <select
                     {...register('district_id')}
+                    value={watch('district_id') || ''}
+                    onChange={(e) => {
+                      setValue('district_id', e.target.value, { shouldValidate: true });
+                      setValue('village_id', '', { shouldValidate: true });
+                    }}
                     className="w-full px-3.5 py-2.5 bg-[#F1F5F1]/50 rounded-xl border border-[#C2C9BD] text-[#191C19] font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#2E7D32] focus:border-[#2E7D32] transition-all"
                   >
                     <option value="">Pilih Kecamatan</option>
                     {districtList.map((d) => (
-                      <option key={d.id} value={d.id}>
+                      <option key={d.id} value={String(d.id)}>
                         Kec. {d.name}
                       </option>
                     ))}
@@ -435,12 +513,13 @@ export default function AdminFarmFormPage() {
                   </label>
                   <select
                     {...register('village_id')}
+                    value={watch('village_id') || ''}
                     disabled={!selectedDistrictId}
                     className="w-full px-3.5 py-2.5 bg-[#F1F5F1]/50 rounded-xl border border-[#C2C9BD] text-[#191C19] font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#2E7D32] focus:border-[#2E7D32] transition-all disabled:opacity-50"
                   >
                     <option value="">Pilih Desa / Pekon</option>
                     {villageList.map((v) => (
-                      <option key={v.id} value={v.id}>
+                      <option key={v.id} value={String(v.id)}>
                         Pekon {v.name}
                       </option>
                     ))}
@@ -511,7 +590,8 @@ export default function AdminFarmFormPage() {
             </button>
           </div>
         </form>
-      )}
+      )
+    )}
 
       {/* TAB 2: LIVESTOCK COMMODITIES SUB-RESOURCE */}
       {activeTab === 'livestock' && isEditMode && (
@@ -761,9 +841,21 @@ function LivestockModal({ isOpen, onClose, farmId, initialData, onSuccess }) {
   const { success, error: showError } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const [categoryId, setCategoryId] = useState(initialData ? String(initialData.livestock_category_id || '') : '');
-  const [typeId, setTypeId] = useState(initialData ? String(initialData.livestock_type_id || '') : '');
-  const [subtypeId, setSubtypeId] = useState(initialData ? String(initialData.livestock_subtype_id || '') : '');
+  const [categoryId, setCategoryId] = useState(
+    initialData
+      ? String(initialData.livestock_category_id || initialData.livestock_category?.id || initialData.category_id || '')
+      : ''
+  );
+  const [typeId, setTypeId] = useState(
+    initialData
+      ? String(initialData.livestock_type_id || initialData.livestock_type?.id || initialData.type_id || '')
+      : ''
+  );
+  const [subtypeId, setSubtypeId] = useState(
+    initialData
+      ? String(initialData.livestock_subtype_id || initialData.livestock_subtype?.id || initialData.subtype_id || '')
+      : ''
+  );
   const [population, setPopulation] = useState(initialData ? (initialData.population || 10) : 10);
 
   const { data: categories = [] } = useLivestockCategoriesQuery();
@@ -832,7 +924,7 @@ function LivestockModal({ isOpen, onClose, farmId, initialData, onSuccess }) {
           >
             <option value="">Pilih Kategori (Ruminansia / Unggas)</option>
             {categories.map((c) => (
-              <option key={c.id} value={c.id}>
+              <option key={c.id} value={String(c.id)}>
                 {c.name}
               </option>
             ))}
@@ -853,7 +945,7 @@ function LivestockModal({ isOpen, onClose, farmId, initialData, onSuccess }) {
           >
             <option value="">Pilih Jenis Ternak</option>
             {types.map((t) => (
-              <option key={t.id} value={t.id}>
+              <option key={t.id} value={String(t.id)}>
                 {t.name}
               </option>
             ))}
@@ -871,7 +963,7 @@ function LivestockModal({ isOpen, onClose, farmId, initialData, onSuccess }) {
           >
             <option value="">{subtypes.length === 0 ? 'Tidak ada sub-ras spesifik' : 'Pilih Ras / Subtipe'}</option>
             {subtypes.map((st) => (
-              <option key={st.id} value={st.id}>
+              <option key={st.id} value={String(st.id)}>
                 {st.name}
               </option>
             ))}

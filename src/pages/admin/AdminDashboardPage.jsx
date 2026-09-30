@@ -9,7 +9,7 @@ import {
   Clock,
 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
-import { adminUsersApi, validationsApi } from '../../services/api';
+import { adminUsersApi /*, validationsApi */ } from '../../services/api';
 import { StatCardSkeleton } from '../../components/ui/LoadingSkeleton';
 import ErrorState from '../../components/ui/ErrorState';
 
@@ -28,7 +28,8 @@ export default function AdminDashboardPage() {
     },
   });
 
-  // 2. Fetch Recent Pending Validations
+  // 2. Fetch Recent Pending Validations (Temporarily disabled)
+  /*
   const {
     data: validationsRes,
   } = useQuery({
@@ -38,6 +39,7 @@ export default function AdminDashboardPage() {
       return res.data || [];
     },
   });
+  */
 
   // 3. Fetch Admin Users Count
   const {
@@ -52,10 +54,10 @@ export default function AdminDashboardPage() {
 
   const totalFarms = summaryRes?.total_farms ?? 128;
   const totalPopulation = summaryRes?.total_livestock_population ?? 45800;
-  const pendingCount = summaryRes?.validations?.pending ?? summaryRes?.pending_validations ?? 6;
+  // const pendingCount = summaryRes?.validations?.pending ?? summaryRes?.pending_validations ?? 6;
   const totalAdmins = usersRes?.length ?? 1;
 
-  const pendingValidations = validationsRes || [];
+  // const pendingValidations = validationsRes || [];
 
   return (
     <div className="space-y-8 font-body text-[#191C19] max-w-7xl mx-auto">
@@ -81,17 +83,17 @@ export default function AdminDashboardPage() {
         </Link>
       </div>
 
-      {/* 4 Primary Summary Metric Cards (MD3 Elevated / Tonal Cards) */}
+      {/* 3 Primary Summary Metric Cards (MD3 Elevated / Tonal Cards) */}
       {isSummaryLoading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {Array.from({ length: 4 }).map((_, i) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {Array.from({ length: 3 }).map((_, i) => (
             <StatCardSkeleton key={i} />
           ))}
         </div>
       ) : isSummaryError ? (
         <ErrorState onRetry={refetchSummary} />
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           
           {/* Total Farms */}
           <div className="p-6 rounded-3xl bg-white border border-[#C2C9BD]/50 shadow-2xs hover:shadow-sm transition-all space-y-3">
@@ -135,7 +137,8 @@ export default function AdminDashboardPage() {
             </div>
           </div>
 
-          {/* Pending Validations */}
+          {/* Pending Validations (Temporarily hidden) */}
+          {/*
           <div className="p-6 rounded-3xl bg-white border border-[#C2C9BD]/50 shadow-2xs hover:shadow-sm transition-all space-y-3">
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-bold font-heading uppercase tracking-wider text-[#495348]">
@@ -158,6 +161,7 @@ export default function AdminDashboardPage() {
               </Link>
             </div>
           </div>
+          */}
 
           {/* Admin Users */}
           <div className="p-6 rounded-3xl bg-white border border-[#C2C9BD]/50 shadow-2xs hover:shadow-sm transition-all space-y-3">
@@ -187,7 +191,7 @@ export default function AdminDashboardPage() {
       )}
 
       {/* Quick Action Hub */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         
         <Link
           to="/admin/farms/new"
@@ -209,6 +213,8 @@ export default function AdminDashboardPage() {
           </div>
         </Link>
 
+        {/* Validasi Data Survei Mantri (Temporarily hidden) */}
+        {/*
         <Link
           to="/admin/validations"
           className="p-6 rounded-3xl bg-white border border-[#C2C9BD]/50 hover:border-[#B78103]/60 hover:shadow-sm transition-all space-y-3 group"
@@ -228,6 +234,7 @@ export default function AdminDashboardPage() {
             </p>
           </div>
         </Link>
+        */}
 
         <Link
           to="/admin/sdss"
@@ -251,7 +258,8 @@ export default function AdminDashboardPage() {
 
       </div>
 
-      {/* Pending Surveys Queue Table Widget */}
+      {/* Pending Surveys Queue Table Widget (Temporarily hidden) */}
+      {/*
       <div className="p-6 sm:p-8 rounded-3xl bg-white border border-[#C2C9BD]/50 shadow-2xs space-y-5 overflow-hidden">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#E2E8E2] pb-4">
           <div>
@@ -320,6 +328,7 @@ export default function AdminDashboardPage() {
           </table>
         </div>
       </div>
+      */}
 
     </div>
   );

@@ -13,16 +13,16 @@ export function useDistrictsQuery() {
   });
 }
 
-// Hook for Villages (Cascading with district_id)
+// Hook for Villages (Optionally filtered by district_id)
 export function useVillagesQuery(districtId) {
   return useQuery({
-    queryKey: ['spatial', 'villages', districtId],
+    queryKey: ['spatial', 'villages', districtId || 'all'],
     queryFn: async () => {
-      if (!districtId) return { type: 'FeatureCollection', features: [] };
-      const res = await spatialApi.getVillagesGeoJSON({ district_id: districtId });
+      const res = await spatialApi.getVillagesGeoJSON(
+        districtId ? { district_id: districtId } : {}
+      );
       return res;
     },
-    enabled: Boolean(districtId),
     staleTime: 1000 * 60 * 30,
   });
 }
