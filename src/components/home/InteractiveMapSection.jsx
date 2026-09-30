@@ -19,8 +19,39 @@ const createCustomMarker = (colorHex) => {
 };
 
 const greenMarker = createCustomMarker('#2E7D32');
-const blueMarker = createCustomMarker('#1565C0');
-const amberMarker = createCustomMarker('#F9A825');
+const amberMarker = createCustomMarker('#D97706');
+const orangeMarker = createCustomMarker('#E65100');
+
+// Vibrant & distinguishable thematic color palette for village polygons
+const VILLAGE_COLOR_PALETTE = [
+  { fill: '#10B981', stroke: '#047857' }, // Emerald Green
+  { fill: '#3B82F6', stroke: '#1D4ED8' }, // Ocean Blue
+  { fill: '#F59E0B', stroke: '#D97706' }, // Warm Amber
+  { fill: '#8B5CF6', stroke: '#6D28D9' }, // Violet Purple
+  { fill: '#EC4899', stroke: '#BE185D' }, // Vivid Pink
+  { fill: '#14B8A6', stroke: '#0F766E' }, // Teal
+  { fill: '#F97316', stroke: '#C2410C' }, // Tangerine Orange
+  { fill: '#6366F1', stroke: '#4338CA' }, // Indigo
+  { fill: '#84CC16', stroke: '#4D7C0F' }, // Lime Green
+  { fill: '#06B6D4', stroke: '#0E7490' }, // Cyan
+  { fill: '#A855F7', stroke: '#7E22CE' }, // Purple
+  { fill: '#E11D48', stroke: '#9F1239' }, // Crimson Rose
+  { fill: '#059669', stroke: '#064E3B' }, // Forest Green
+  { fill: '#D97706', stroke: '#92400E' }, // Dark Amber
+  { fill: '#0284C7', stroke: '#0369A1' }, // Sky Blue
+  { fill: '#4F46E5', stroke: '#3730A3' }, // Deep Indigo
+];
+
+const getVillagePalette = (identifier) => {
+  if (!identifier) return VILLAGE_COLOR_PALETTE[0];
+  let hash = 0;
+  const str = String(identifier);
+  for (let i = 0; i < str.length; i++) {
+    hash = str.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const index = Math.abs(hash) % VILLAGE_COLOR_PALETTE.length;
+  return VILLAGE_COLOR_PALETTE[index];
+};
 
 const defaultMockLocations = [
   {
@@ -66,11 +97,11 @@ const defaultMockLocations = [
 ];
 
 export default function InteractiveMapSection() {
-  // Fetch real GeoJSON districts boundaries
-  const { data: districtsGeoJSON } = useQuery({
-    queryKey: ['spatial', 'districts', 'home'],
+  // Fetch real GeoJSON village boundaries
+  const { data: villagesGeoJSON } = useQuery({
+    queryKey: ['spatial', 'villages', 'home'],
     queryFn: async () => {
-      const res = await spatialApi.getDistrictsGeoJSON();
+      const res = await spatialApi.getVillagesGeoJSON();
       return res;
     },
     staleTime: 1000 * 60 * 30,
@@ -124,7 +155,7 @@ export default function InteractiveMapSection() {
           Visualisasi Spasial Wilayah
         </h2>
         <p className="text-sm sm:text-base text-[#495348] font-body leading-relaxed max-w-[60ch] mx-auto">
-          Eksplorasi sebaran titik peternakan, zonasi komoditas, dan batas administratif 9 kecamatan di Kabupaten Pringsewu.
+          Eksplorasi sebaran titik peternakan, zonasi komoditas, dan batas administratif pekon/desa di Kabupaten Pringsewu.
         </p>
       </motion.div>
 
@@ -152,21 +183,66 @@ export default function InteractiveMapSection() {
             {/* Clean Voyager Basemap */}
             <TileLayer
               attribution='&copy; <a href="https://carto.com/">CARTO</a> & OpenStreetMap'
-              url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+              url={import.meta.env.VITE_MAP_TILE_URL}
             />
 
-            {/* Render District Boundaries if available */}
-            {districtsGeoJSON && (
+            {/* Render Village Boundaries */}
+            {villagesGeoJSON && (
               <GeoJSON
-                key={JSON.stringify(districtsGeoJSON)}
-                data={districtsGeoJSON}
-                style={() => ({
-                  color: '#2E7D32',
-                  weight: 1.5,
-                  fillColor: '#2E7D32',
-                  fillOpacity: 0.05,
-                  dashArray: '3, 4',
-                })}
+                key={`home-villages-${JSON.stringify(villagesGeoJSON)}`}
+                data={villagesGeoJSON}
+                style={(feature) => {
+                  const name = feature?.properties?.name || feature?.id || 'Desa';
+                  const palette = getVillagePalette(name);
+
+                  return {
+                    color: palette.stroke,
+                    weight: 1.8,
+                    fillColor: palette.fill,
+                    fillOpacity: 0.22,
+                    dashArray: '3, 4',
+                  };
+                }}
+                onEachFeature={(feature, layer) => {
+                  const name = feature.properties?.name || feature.properties?.village_name || 'Pekon/Desa';
+                  const district = feature.properties?.district_name || 'Adiluwih';
+                  const totalFarms = feature.properties?.total_farms || 0;
+                  const totalPop = feature.properties?.total_population || 0;
+                  const palette = getVillagePalette(name);
+
+                  layer.bindTooltip(
+                    `<div class="space-y-1">
+                      <div class="flex items-center gap-1.5">
+                        <span class="w-2.5 h-2.5 rounded-full inline-block shrink-0 shadow-xs" style="background-color: ${palette.fill}; border: 1px solid ${palette.stroke}"></span>
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-[#495348] font-heading">Pekon / Desa</span>
+                      </div>
+                      <div class="text-xs font-black font-heading text-[#191C19]">${name}</div>
+                      <div class="text-[11px] text-[#495348] border-t border-[#C2C9BD]/50 pt-1 mt-1 flex flex-col gap-0.5">
+                        <span>Kecamatan: <b class="text-[#191C19]">${district}</b></span>
+                        <span>Kandang Terdata: <b class="text-[#2E7D32]">${totalFarms} Unit</b></span>
+                        <span>Populasi: <b class="text-[#191C19]">${Number(totalPop).toLocaleString('id-ID')} Ekor</b></span>
+                      </div>
+                    </div>`,
+                    { sticky: true, className: 'custom-leaflet-tooltip' }
+                  );
+
+                  layer.on({
+                    mouseover: (e) => {
+                      const l = e.target;
+                      l.setStyle({
+                        fillOpacity: 0.45,
+                        weight: 2.8,
+                      });
+                    },
+                    mouseout: (e) => {
+                      const l = e.target;
+                      l.setStyle({
+                        fillOpacity: 0.22,
+                        weight: 1.8,
+                      });
+                    },
+                  });
+                }}
               />
             )}
 
@@ -182,8 +258,8 @@ export default function InteractiveMapSection() {
                 props.scale === 'Besar'
                   ? greenMarker
                   : props.scale === 'Sedang'
-                  ? blueMarker
-                  : amberMarker;
+                  ? amberMarker
+                  : orangeMarker;
 
               return (
                 <Marker key={feat.id || props.id || `${lat}-${lng}`} position={[lat, lng]} icon={markerIcon}>
@@ -220,10 +296,11 @@ export default function InteractiveMapSection() {
                       <div className="pt-1.5">
                         <Link
                           to={`/spasial?id=${props.id}`}
-                          className="w-full inline-flex items-center justify-center gap-1.5 px-4 py-2 text-xs font-bold font-heading rounded-full bg-[#2E7D32] text-white hover:bg-[#1B5E20] transition-colors shadow-2xs"
+                          className="w-full inline-flex items-center justify-center gap-1.5 px-4 py-2 text-xs font-bold font-heading rounded-full !bg-[#2E7D32] !text-white hover:!bg-[#1B5E20] transition-colors shadow-2xs no-underline"
+                          style={{ color: '#ffffff', backgroundColor: '#2E7D32' }}
                         >
-                          <span>Buka di WebGIS</span>
-                          <ArrowRight className="w-3 h-3" />
+                          <span style={{ color: '#ffffff' }} className="!text-white font-bold">Selengkapnya</span>
+                          <ArrowRight className="w-3 h-3 !text-white" style={{ color: '#ffffff' }} />
                         </Link>
                       </div>
                     </div>
@@ -248,11 +325,11 @@ export default function InteractiveMapSection() {
               <span>Skala Besar</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#1565C0]" />
+              <span className="w-2.5 h-2.5 rounded-full bg-[#D97706]" />
               <span>Skala Sedang</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#F9A825]" />
+              <span className="w-2.5 h-2.5 rounded-full bg-[#E65100]" />
               <span>Skala Kecil/Mikro</span>
             </div>
           </div>

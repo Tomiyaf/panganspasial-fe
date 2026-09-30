@@ -17,7 +17,7 @@ export default function HeroSection() {
 
   const stats = [
     {
-      number: kpi?.total_farms ? kpi.total_farms.toLocaleString('id-ID') : '128',
+      number: kpi?.total_farms ? kpi.total_farms.toLocaleString('id-ID') : '40',
       label: 'Lokasi',
     },
     {
@@ -25,8 +25,8 @@ export default function HeroSection() {
       label: 'Populasi',
     },
     {
-      number: kpi?.total_districts ? kpi.total_districts.toString() : '9',
-      label: 'Kecamatan',
+      number: kpi?.total_villages ? kpi.total_villages.toString() : '14',
+      label: 'Pekon / Desa',
     },
     {
       number: kpi?.total_livestock_types ? kpi.total_livestock_types.toString() : '12',
