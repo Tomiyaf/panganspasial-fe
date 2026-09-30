@@ -24,7 +24,7 @@ import {
   Pie,
 } from 'recharts';
 import { statisticsApi } from '../services/api';
-import { useDistrictsQuery } from '../hooks/useMasterData';
+import { useDistrictsQuery, useVillagesQuery } from '../hooks/useMasterData';
 import { StatCardSkeleton } from '../components/ui/LoadingSkeleton';
 import ErrorState from '../components/ui/ErrorState';
 
@@ -68,22 +68,27 @@ export default function StatistikPage() {
     },
   });
 
-  // 4. Fetch District Aggregate Table
+  // 4. Fetch Villages Aggregate Table
   const {
-    data: farmsStatsRes,
-    isLoading: isFarmsStatsLoading,
-  } = useQuery({
-    queryKey: ['statistics', 'farms', 'districts'],
-    queryFn: async () => {
-      const res = await statisticsApi.getFarmsStats();
-      return res.data || [];
-    },
-  });
+    data: villagesGeoJSON,
+    isLoading: isVillagesStatsLoading,
+  } = useVillagesQuery(selectedDistrictId);
+
+  const villageStatsList = villagesGeoJSON?.features?.map((f) => ({
+    id: f.properties?.id || f.id,
+    name: f.properties?.name || f.properties?.village_name || 'Pekon',
+    code: f.properties?.code || '18.10.08.20xx',
+    district_id: f.properties?.district_id,
+    district_name: f.properties?.district_name || 'Adiluwih',
+    total_farms: f.properties?.total_farms || 0,
+    total_population: f.properties?.total_population || 0,
+  })) || [];
 
   const kpi = overviewRes?.kpi || {
-    total_farms: 128,
+    total_farms: 40,
     total_livestock_population: 45800,
     total_districts: 9,
+    total_villages: 14,
     total_livestock_types: 12,
   };
 
@@ -190,16 +195,16 @@ export default function StatistikPage() {
             <div className="p-6 sm:p-7 rounded-3xl bg-white border border-[#C2C9BD]/50 shadow-2xs space-y-2 hover:border-[#B78103]/40 transition-colors">
               <div className="flex items-center justify-between">
                 <span className="text-[10px] font-bold font-heading uppercase tracking-wider text-[#495348]">
-                  Kecamatan Terdata
+                  Pekon / Desa Terdata
                 </span>
                 <div className="w-10 h-10 rounded-full bg-[#FFF8E1] text-[#B78103] flex items-center justify-center shadow-2xs">
                   <MapPin className="w-5 h-5" />
                 </div>
               </div>
               <div className="text-3xl sm:text-4xl font-extrabold font-heading text-[#191C19] tracking-tight">
-                {kpi.total_districts}
+                {kpi.total_villages || villageStatsList.length || 14}
               </div>
-              <p className="text-[11px] text-[#495348] font-medium">Kecamatan administratif</p>
+              <p className="text-[11px] text-[#495348] font-medium">Pekon / Desa administratif</p>
             </div>
 
             {/* KPI 4 */}
@@ -345,22 +350,22 @@ export default function StatistikPage() {
 
         </div>
 
-        {/* Agregasi Komparasi Kecamatan Table */}
+        {/* Agregasi Komparasi Pekon / Desa Table */}
         <div className="p-6 sm:p-8 rounded-3xl bg-white border border-[#C2C9BD]/50 shadow-2xs space-y-5">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
               <h3 className="text-lg font-bold font-heading text-[#191C19] tracking-tight">
-                Tabel Agregasi Peternakan per Kecamatan
+                Tabel Agregasi Peternakan per Pekon / Desa
               </h3>
               <p className="text-xs text-[#495348] mt-0.5">
-                Perbandingan jumlah peternakan, sebaran desa, dan total populasi hewan di Kabupaten Pringsewu.
+                Perbandingan jumlah peternakan, wilayah pekon, dan total populasi hewan ternak terdata.
               </p>
             </div>
             <Link
               to="/spasial"
               className="inline-flex items-center gap-1.5 text-xs font-bold font-heading text-[#2E7D32] hover:text-[#1B5E20] transition-colors"
             >
-              <span>Eksplorasi di Peta WebGIS</span>
+              <span>Buka Seluruh Peta WebGIS</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
@@ -370,49 +375,50 @@ export default function StatistikPage() {
               <thead className="bg-[#F1F5F1]/70 text-[#495348] uppercase font-heading text-[10px] tracking-wider border-b border-[#E2E8E2]">
                 <tr>
                   <th className="py-3.5 px-4 rounded-l-xl">Kode Wilayah</th>
-                  <th className="py-3.5 px-4">Nama Kecamatan</th>
-                  <th className="py-3.5 px-4 text-center">Jumlah Desa/Pekon</th>
+                  <th className="py-3.5 px-4">Nama Pekon / Desa</th>
+                  <th className="py-3.5 px-4">Kecamatan</th>
                   <th className="py-3.5 px-4 text-right">Unit Peternakan</th>
                   <th className="py-3.5 px-4 text-right">Total Populasi</th>
                   <th className="py-3.5 px-4 text-center rounded-r-xl">Aksi</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#E2E8E2]/60">
-                {isFarmsStatsLoading ? (
+                {isVillagesStatsLoading ? (
                   <tr>
                     <td colSpan={6} className="py-8 text-center text-[#495348]">
-                      Memuat data agregasi kecamatan...
+                      Memuat data agregasi desa/pekon...
                     </td>
                   </tr>
-                ) : (farmsStatsRes || []).length === 0 ? (
+                ) : villageStatsList.length === 0 ? (
                   <tr>
                     <td colSpan={6} className="py-8 text-center text-[#495348]">
-                      Data statistik kecamatan belum tersedia.
+                      Data statistik desa/pekon belum tersedia.
                     </td>
                   </tr>
                 ) : (
-                  farmsStatsRes.map((d) => (
-                    <tr key={d.district_id} className="hover:bg-[#F1F5F1]/40 transition-colors">
+                  villageStatsList.map((v) => (
+                    <tr key={v.id} className="hover:bg-[#F1F5F1]/40 transition-colors">
                       <td className="py-3.5 px-4 font-mono text-[#495348]">
-                        {d.district_code || '18.10.xx'}
+                        {v.code}
                       </td>
                       <td className="py-3.5 px-4 font-bold text-[#191C19] font-heading">
-                        Kecamatan {d.district_name}
+                        Pekon {v.name}
                       </td>
-                      <td className="py-3.5 px-4 text-center text-[#495348] font-semibold">
-                        {d.village_count || 14} Pekon
+                      <td className="py-3.5 px-4 text-[#495348] font-medium">
+                        Kecamatan {v.district_name}
                       </td>
                       <td className="py-3.5 px-4 text-right font-semibold text-[#191C19]">
-                        {d.farm_count} unit
+                        {v.total_farms} unit
                       </td>
                       <td className="py-3.5 px-4 text-right font-bold text-[#2E7D32]">
-                        {d.total_population?.toLocaleString('id-ID')} ekor
+                        {Number(v.total_population || 0).toLocaleString('id-ID')} ekor
                       </td>
                       <td className="py-3.5 px-4 text-center">
                         <Link
-                          to={`/spasial?district_id=${d.district_id}`}
-                          className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[#E8F5E9] text-[#1B5E20] hover:bg-[#2E7D32] hover:text-white text-[11px] font-bold font-heading transition-colors"
+                          to={`/spasial?village_id=${v.id}`}
+                          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#E8F5E9] text-[#1B5E20] hover:bg-[#2E7D32] hover:text-white text-[11px] font-bold font-heading transition-colors shadow-2xs"
                         >
+                          <MapPin className="w-3 h-3" />
                           <span>Peta</span>
                           <ArrowRight className="w-3 h-3" />
                         </Link>
