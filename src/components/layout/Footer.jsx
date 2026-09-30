@@ -1,58 +1,59 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { MapPin, Mail, Phone, Building2 } from 'lucide-react';
 
 export default function Footer() {
+  const location = useLocation();
+  const isSpasialPage = location.pathname === '/spasial';
+
   const navLinks = [
     { name: 'Beranda', path: '/' },
     { name: 'Spasial', path: '/spasial' },
     { name: 'Statistik', path: '/statistik' },
-    { name: 'Rekomendasi', path: '/rekomendasi' },
-    { name: 'Tentang', path: '/tentang' },
     { name: 'Kontak', path: '/kontak' },
   ];
 
   const platformLinks = [
     { name: 'Interactive WebGIS', path: '/spasial' },
     { name: 'Regional Statistics', path: '/statistik' },
-    { name: 'Spatial Decision Support', path: '/rekomendasi' },
-    { name: 'Data Sources', path: '/tentang' },
     { name: 'Admin Portal', path: '/admin/login' },
   ];
 
   return (
     <footer className="w-full bg-[#111611] text-[#A3B3A2] font-body select-none">
       
-      {/* Pre-Footer Closing CTA Section - MD3 Rich Container */}
-      <div className="border-b border-[#2E7D32]/20 py-16 md:py-20">
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.5 }}
-          transition={{ duration: 0.6 }}
-          className="max-w-[1400px] mx-auto px-6 lg:px-12"
-        >
-          <div className="rounded-[28px] border border-[#2E7D32]/30 bg-gradient-to-br from-[#1B5E20]/40 via-[#162B17]/60 to-[#111611] p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8 text-center md:text-left shadow-2xl relative overflow-hidden">
-            <div className="space-y-2 relative z-10">
-              <span className="text-xs font-bold uppercase tracking-widest text-[#81C784] font-heading">
-                Eksplorasi Geospasial Peternakan
-              </span>
-              <h3 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold font-heading text-white tracking-tight">
-                Siap menjelajahi peta sebaran peternakan Pringsewu?
-              </h3>
-              <p className="text-sm sm:text-base text-[#C2C9BD] font-body max-w-[60ch]">
-                Akses peta interaktif, zonasi komoditas, dan data spasial peternakan 9 kecamatan secara langsung.
-              </p>
+      {/* Pre-Footer Closing CTA Section - Hidden on /spasial page */}
+      {!isSpasialPage && (
+        <div className="border-b border-[#2E7D32]/20 py-16 md:py-20">
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.5 }}
+            transition={{ duration: 0.6 }}
+            className="max-w-[1400px] mx-auto px-6 lg:px-12"
+          >
+            <div className="rounded-[28px] border border-[#2E7D32]/30 bg-gradient-to-br from-[#1B5E20]/40 via-[#162B17]/60 to-[#111611] p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8 text-center md:text-left shadow-2xl relative overflow-hidden">
+              <div className="space-y-2 relative z-10">
+                <span className="text-xs font-bold uppercase tracking-widest text-[#81C784] font-heading">
+                  Eksplorasi Geospasial Peternakan
+                </span>
+                <h3 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold font-heading text-white tracking-tight">
+                  Siap menjelajahi peta sebaran peternakan Pringsewu?
+                </h3>
+                <p className="text-sm sm:text-base text-[#C2C9BD] font-body max-w-[60ch]">
+                  Akses peta interaktif, zonasi komoditas, dan data spasial peternakan pekon dan desa secara langsung.
+                </p>
+              </div>
+              <Link
+                to="/spasial"
+                className="relative z-10 inline-flex items-center justify-center px-8 py-4 text-sm font-bold font-heading rounded-full bg-[#2E7D32] hover:bg-[#1B5E20] active:scale-[0.98] text-white shadow-xl transition-all duration-200 shrink-0"
+              >
+                Eksplorasi WebGIS
+              </Link>
             </div>
-            <Link
-              to="/spasial"
-              className="relative z-10 inline-flex items-center justify-center px-8 py-4 text-sm font-bold font-heading rounded-full bg-[#2E7D32] hover:bg-[#1B5E20] active:scale-[0.98] text-white shadow-xl transition-all duration-200 shrink-0"
-            >
-              Eksplorasi WebGIS
-            </Link>
-          </div>
-        </motion.div>
-      </div>
+          </motion.div>
+        </div>
+      )}
 
       {/* Main 4-Column Footer Layout */}
       <div className="max-w-[1400px] mx-auto px-6 lg:px-12 py-16 md:py-24">

@@ -27,8 +27,6 @@ export default function Navbar() {
     { name: 'Beranda', path: '/' },
     { name: 'Peta Spasial', path: '/spasial' },
     { name: 'Statistik', path: '/statistik' },
-    { name: 'Rekomendasi', path: '/rekomendasi' },
-    { name: 'Tentang', path: '/tentang' },
     { name: 'Kontak', path: '/kontak' },
   ];
 
@@ -40,8 +38,8 @@ export default function Navbar() {
           : 'bg-transparent py-5'
       }`}
     >
-      <div className="max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between">
-        
+      <div className="max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between relative">
+
         {/* Brand Logo & Name */}
         <Link to="/" className="flex items-center gap-3 group">
           <div className="w-10 h-10 rounded-2xl bg-[#2E7D32] text-white flex items-center justify-center shadow-md shadow-emerald-950/20 group-hover:scale-105 transition-transform duration-200">
@@ -57,8 +55,8 @@ export default function Navbar() {
           </div>
         </Link>
 
-        {/* Desktop Navigation Links - MD3 Capsule Pill Container */}
-        <nav className="hidden md:flex items-center gap-1.5 bg-[#F1F5F1] p-1.5 rounded-full border border-[#C2C9BD]/40 font-body text-xs font-semibold shadow-2xs">
+        {/* Desktop Navigation Links - MD3 Capsule Pill Container (Centered) */}
+        <nav className="hidden md:flex md:absolute md:left-1/2 md:-translate-x-1/2 items-center gap-1.5 bg-[#F1F5F1] p-1.5 rounded-full border border-[#C2C9BD]/40 font-body text-xs font-semibold shadow-2xs">
           {navLinks.map((link) => {
             const isActive = location.pathname === link.path;
             return (
@@ -77,7 +75,8 @@ export default function Navbar() {
           })}
         </nav>
 
-        {/* Right CTA / Admin Access */}
+        {/* Right CTA / Admin Access (Hidden as per request) */}
+        {/*
         <div className="hidden md:flex items-center gap-3">
           <Link
             to="/admin/login"
@@ -87,6 +86,7 @@ export default function Navbar() {
             <ExternalLink className="w-3.5 h-3.5 text-[#A3B3A2]" />
           </Link>
         </div>
+        */}
 
         {/* Mobile Menu Trigger */}
         <button
@@ -125,6 +125,7 @@ export default function Navbar() {
               ))}
             </div>
 
+            {/*
             <div className="pt-2 border-t border-[#E2E8E2]">
               <Link
                 to="/admin/login"
@@ -135,6 +136,7 @@ export default function Navbar() {
                 <ExternalLink className="w-3.5 h-3.5 text-[#A3B3A2]" />
               </Link>
             </div>
+            */}
           </motion.div>
         )}
       </AnimatePresence>

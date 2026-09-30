@@ -10,6 +10,7 @@ import StatistikPage from './pages/StatistikPage';
 import RekomendasiPage from './pages/RekomendasiPage';
 import TentangPage from './pages/TentangPage';
 import KontakPage from './pages/KontakPage';
+import NotFoundPage from './pages/NotFoundPage';
 
 // Admin Pages & Layout
 import AdminLoginPage from './pages/admin/AdminLoginPage';
@@ -18,7 +19,7 @@ import AdminLayout from './components/admin/AdminLayout';
 import AdminDashboardPage from './pages/admin/AdminDashboardPage';
 import AdminFarmsListPage from './pages/admin/farms/AdminFarmsListPage';
 import AdminFarmFormPage from './pages/admin/farms/AdminFarmFormPage';
-import AdminValidationsPage from './pages/admin/validations/AdminValidationsPage';
+// import AdminValidationsPage from './pages/admin/validations/AdminValidationsPage';
 import AdminSDSSPage from './pages/admin/sdss/AdminSDSSPage';
 import AdminMasterDataPage from './pages/admin/master/AdminMasterDataPage';
 import AdminUsersPage from './pages/admin/users/AdminUsersPage';
@@ -38,8 +39,8 @@ function AppContent() {
           <Route path="/" element={<HomePage />} />
           <Route path="/spasial" element={<SpasialPage />} />
           <Route path="/statistik" element={<StatistikPage />} />
-          <Route path="/rekomendasi" element={<RekomendasiPage />} />
-          <Route path="/tentang" element={<TentangPage />} />
+          {/* <Route path="/rekomendasi" element={<RekomendasiPage />} /> */}
+          {/* <Route path="/tentang" element={<TentangPage />} /> */}
           <Route path="/kontak" element={<KontakPage />} />
 
           {/* Admin Auth */}
@@ -59,11 +60,14 @@ function AppContent() {
             <Route path="farms" element={<AdminFarmsListPage />} />
             <Route path="farms/new" element={<AdminFarmFormPage />} />
             <Route path="farms/:id/edit" element={<AdminFarmFormPage />} />
-            <Route path="validations" element={<AdminValidationsPage />} />
+            {/* <Route path="validations" element={<AdminValidationsPage />} /> */}
             <Route path="sdss" element={<AdminSDSSPage />} />
             <Route path="master" element={<AdminMasterDataPage />} />
             <Route path="users" element={<AdminUsersPage />} />
           </Route>
+
+          {/* 404 Not Found Catch-All Route */}
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </div>
 
