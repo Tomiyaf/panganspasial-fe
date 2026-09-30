@@ -52,12 +52,12 @@ export default function AdminLoginPage() {
 
   return (
     <div className="min-h-screen bg-[#111611] flex flex-col justify-center py-12 px-6 sm:px-8 font-body select-none">
-      
+
       {/* Background Subtle Gradient */}
       <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1B5E20]/30 via-[#111611] to-[#111611] pointer-events-none" />
 
       <div className="relative z-10 sm:mx-auto sm:w-full sm:max-w-md space-y-6">
-        
+
         {/* Brand Header */}
         <div className="text-center space-y-2">
           <Link to="/" className="inline-flex items-center gap-3 group">
@@ -81,7 +81,7 @@ export default function AdminLoginPage() {
         {/* MD3 Elevated Login Card */}
         <div className="bg-white rounded-[28px] border border-[#C2C9BD]/50 shadow-2xl p-8 sm:p-9 space-y-6">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 text-xs">
-            
+
             {/* Email Field */}
             <div className="space-y-1.5">
               <label className="font-bold text-[#191C19] block font-heading">
@@ -147,10 +147,10 @@ export default function AdminLoginPage() {
           </form>
 
           {/* Quick Demo Hint */}
-          <div className="p-3.5 rounded-2xl bg-[#E8F5E9]/60 border border-[#C8E6C9] text-[11px] text-[#1B5E20] flex items-center gap-2.5">
+          {/* <div className="p-3.5 rounded-2xl bg-[#E8F5E9]/60 border border-[#C8E6C9] text-[11px] text-[#1B5E20] flex items-center gap-2.5">
             <ShieldCheck className="w-4 h-4 text-[#2E7D32] shrink-0" />
             <span>Kredensial demo: <code className="font-bold">admin@panganspasial.id</code> / <code className="font-bold">Admin#2026</code></span>
-          </div>
+          </div>*/}
 
         </div>
 
