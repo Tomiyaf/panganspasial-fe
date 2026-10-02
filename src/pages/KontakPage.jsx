@@ -1,7 +1,8 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Building2, Mail, Phone, Clock, Send, MapPin } from 'lucide-react';
+import { useForm as useFormspree, ValidationError } from '@formspree/react';
+import { Building2, Mail, Phone, Clock, Send, MapPin, CheckCircle2, RotateCcw, Loader2 } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 
 const contactSchema = z.object({
@@ -13,7 +14,8 @@ const contactSchema = z.object({
 });
 
 export default function KontakPage() {
-  const { success } = useToast();
+  const { success, error: toastError } = useToast();
+  const [formspreeState, handleFormspreeSubmit, resetFormspree] = useFormspree('xljdyzon');
 
   const {
     register,
@@ -24,10 +26,30 @@ export default function KontakPage() {
     resolver: zodResolver(contactSchema),
   });
 
-  const onSubmit = async () => {
-    // Simulate inquiry submission
-    await new Promise((resolve) => setTimeout(resolve, 800));
-    success('Pesan Anda berhasil dikirim ke Dinas Pertanian & Peternakan Kabupaten Pringsewu.');
+  const isSending = isSubmitting || formspreeState.submitting;
+
+  const onSubmit = async (data) => {
+    try {
+      const result = await handleFormspreeSubmit(data);
+      if (result && result.kind === 'error') {
+        const formErrors = result.getFormErrors();
+        const msg =
+          formErrors.length > 0
+            ? formErrors.map((e) => e.message).join(', ')
+            : 'Gagal mengirim pesan ke server. Silakan coba lagi.';
+        toastError(msg, 'Pengiriman Gagal');
+      } else {
+        success('Pesan Anda berhasil dikirim ke Dinas Pertanian & Peternakan Kabupaten Pringsewu.');
+        reset();
+      }
+    } catch (err) {
+      console.error('Error submitting formspree form:', err);
+      toastError('Terjadi gangguan jaringan saat mengirim formulir.', 'Pengiriman Gagal');
+    }
+  };
+
+  const handleResetForm = () => {
+    resetFormspree();
     reset();
   };
 
@@ -122,109 +144,159 @@ export default function KontakPage() {
 
           {/* Right Column: Inquiry Form (7 Cols) */}
           <div className="lg:col-span-7 p-8 sm:p-10 rounded-[28px] bg-white border border-[#C2C9BD]/50 shadow-2xs">
-            <h3 className="text-xl font-bold font-heading text-[#191C19] tracking-tight mb-2">
-              Kirim Pesan / Pengajuan Informasi
-            </h3>
-            <p className="text-xs text-[#495348] mb-6 font-medium">
-              Isi formulir di bawah ini untuk terhubung langsung dengan tim administrasi dinas.
-            </p>
-
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 text-xs font-body">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {/* Name */}
-                <div className="space-y-1.5">
-                  <label className="font-bold text-[#191C19] block font-heading">
-                    Nama Lengkap <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    {...register('name')}
-                    placeholder="Contoh: Dr. Budi Santoso"
-                    className="w-full px-4 py-2.5 bg-[#F1F5F1]/50 rounded-xl border border-[#C2C9BD] text-[#191C19] placeholder:text-[#495348]/60 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#2E7D32] focus:border-[#2E7D32] transition-all"
-                  />
-                  {errors.name && (
-                    <span className="text-red-500 text-[11px] block">{errors.name.message}</span>
-                  )}
+            {formspreeState.succeeded ? (
+              <div className="py-8 px-4 text-center space-y-5">
+                <div className="w-16 h-16 rounded-full bg-[#E8F5E9] text-[#2E7D32] flex items-center justify-center mx-auto shadow-sm">
+                  <CheckCircle2 className="w-9 h-9" />
                 </div>
-
-                {/* Email */}
-                <div className="space-y-1.5">
-                  <label className="font-bold text-[#191C19] block font-heading">
-                    Alamat Email <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="email"
-                    {...register('email')}
-                    placeholder="nama@email.com"
-                    className="w-full px-4 py-2.5 bg-[#F1F5F1]/50 rounded-xl border border-[#C2C9BD] text-[#191C19] placeholder:text-[#495348]/60 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#2E7D32] focus:border-[#2E7D32] transition-all"
-                  />
-                  {errors.email && (
-                    <span className="text-red-500 text-[11px] block">{errors.email.message}</span>
-                  )}
+                <div className="space-y-2 max-w-md mx-auto">
+                  <h3 className="text-2xl font-bold font-heading text-[#191C19] tracking-tight">
+                    Pesan Berhasil Dikirim!
+                  </h3>
+                  <p className="text-xs sm:text-sm text-[#495348] leading-relaxed font-body">
+                    Terima kasih telah menghubungi kami. Pesan dan permohonan informasi Anda telah berhasil terkirim ke Dinas Pertanian & Peternakan Kabupaten Pringsewu dan akan segera ditindaklanjuti.
+                  </p>
+                </div>
+                <div className="pt-3">
+                  <button
+                    type="button"
+                    onClick={handleResetForm}
+                    className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-[#E8F5E9] text-[#1B5E20] hover:bg-[#C8E6C9] font-bold font-heading text-xs transition-all active:scale-[0.98]"
+                  >
+                    <RotateCcw className="w-4 h-4" />
+                    <span>Kirim Pesan Lain</span>
+                  </button>
                 </div>
               </div>
+            ) : (
+              <>
+                <h3 className="text-xl font-bold font-heading text-[#191C19] tracking-tight mb-2">
+                  Kirim Pesan / Pengajuan Informasi
+                </h3>
+                <p className="text-xs text-[#495348] mb-6 font-medium">
+                  Isi formulir di bawah ini untuk terhubung langsung dengan tim administrasi dinas.
+                </p>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {/* Phone */}
-                <div className="space-y-1.5">
-                  <label className="font-bold text-[#191C19] block font-heading">
-                    Nomor WhatsApp / Telepon <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="tel"
-                    {...register('phone')}
-                    placeholder="081234567890"
-                    className="w-full px-4 py-2.5 bg-[#F1F5F1]/50 rounded-xl border border-[#C2C9BD] text-[#191C19] placeholder:text-[#495348]/60 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#2E7D32] focus:border-[#2E7D32] transition-all"
-                  />
-                  {errors.phone && (
-                    <span className="text-red-500 text-[11px] block">{errors.phone.message}</span>
-                  )}
-                </div>
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 text-xs font-body">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {/* Name */}
+                    <div className="space-y-1.5">
+                      <label htmlFor="name" className="font-bold text-[#191C19] block font-heading">
+                        Nama Lengkap <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        id="name"
+                        type="text"
+                        {...register('name')}
+                        placeholder="Contoh: Dr. Budi Santoso"
+                        className="w-full px-4 py-2.5 bg-[#F1F5F1]/50 rounded-xl border border-[#C2C9BD] text-[#191C19] placeholder:text-[#495348]/60 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#2E7D32] focus:border-[#2E7D32] transition-all"
+                      />
+                      {errors.name && (
+                        <span className="text-red-500 text-[11px] block">{errors.name.message}</span>
+                      )}
+                      <ValidationError prefix="Nama" field="name" errors={formspreeState.errors} className="text-red-500 text-[11px] block" />
+                    </div>
 
-                {/* Subject */}
-                <div className="space-y-1.5">
-                  <label className="font-bold text-[#191C19] block font-heading">
-                    Subjek Keperluan <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    {...register('subject')}
-                    placeholder="Permohonan Data / Pelaporan Kandang"
-                    className="w-full px-4 py-2.5 bg-[#F1F5F1]/50 rounded-xl border border-[#C2C9BD] text-[#191C19] placeholder:text-[#495348]/60 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#2E7D32] focus:border-[#2E7D32] transition-all"
-                  />
-                  {errors.subject && (
-                    <span className="text-red-500 text-[11px] block">{errors.subject.message}</span>
-                  )}
-                </div>
-              </div>
+                    {/* Email */}
+                    <div className="space-y-1.5">
+                      <label htmlFor="email" className="font-bold text-[#191C19] block font-heading">
+                        Alamat Email <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        id="email"
+                        type="email"
+                        {...register('email')}
+                        placeholder="nama@email.com"
+                        className="w-full px-4 py-2.5 bg-[#F1F5F1]/50 rounded-xl border border-[#C2C9BD] text-[#191C19] placeholder:text-[#495348]/60 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#2E7D32] focus:border-[#2E7D32] transition-all"
+                      />
+                      {errors.email && (
+                        <span className="text-red-500 text-[11px] block">{errors.email.message}</span>
+                      )}
+                      <ValidationError prefix="Email" field="email" errors={formspreeState.errors} className="text-red-500 text-[11px] block" />
+                    </div>
+                  </div>
 
-              {/* Message */}
-              <div className="space-y-1.5">
-                <label className="font-bold text-[#191C19] block font-heading">
-                  Isi Pesan / Keterangan <span className="text-red-500">*</span>
-                </label>
-                <textarea
-                  rows={4}
-                  {...register('message')}
-                  placeholder="Tuliskan rincian pesan atau pertanyaan Anda secara lengkap..."
-                  className="w-full px-4 py-2.5 bg-[#F1F5F1]/50 rounded-xl border border-[#C2C9BD] text-[#191C19] placeholder:text-[#495348]/60 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#2E7D32] focus:border-[#2E7D32] transition-all"
-                />
-                {errors.message && (
-                  <span className="text-red-500 text-[11px] block">{errors.message.message}</span>
-                )}
-              </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {/* Phone */}
+                    <div className="space-y-1.5">
+                      <label htmlFor="phone" className="font-bold text-[#191C19] block font-heading">
+                        Nomor WhatsApp / Telepon <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        id="phone"
+                        type="tel"
+                        {...register('phone')}
+                        placeholder="081234567890"
+                        className="w-full px-4 py-2.5 bg-[#F1F5F1]/50 rounded-xl border border-[#C2C9BD] text-[#191C19] placeholder:text-[#495348]/60 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#2E7D32] focus:border-[#2E7D32] transition-all"
+                      />
+                      {errors.phone && (
+                        <span className="text-red-500 text-[11px] block">{errors.phone.message}</span>
+                      )}
+                      <ValidationError prefix="Telepon" field="phone" errors={formspreeState.errors} className="text-red-500 text-[11px] block" />
+                    </div>
 
-              <div className="pt-3">
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full bg-[#2E7D32] hover:bg-[#1B5E20] active:scale-[0.98] text-white text-xs font-bold font-heading transition-all duration-150 disabled:opacity-60 shadow-md"
-                >
-                  <Send className="w-4 h-4" />
-                  <span>{isSubmitting ? 'Mengirim Pesan...' : 'Kirim Pesan Sekarang'}</span>
-                </button>
-              </div>
-            </form>
+                    {/* Subject */}
+                    <div className="space-y-1.5">
+                      <label htmlFor="subject" className="font-bold text-[#191C19] block font-heading">
+                        Subjek Keperluan <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        id="subject"
+                        type="text"
+                        {...register('subject')}
+                        placeholder="Permohonan Data / Pelaporan Kandang"
+                        className="w-full px-4 py-2.5 bg-[#F1F5F1]/50 rounded-xl border border-[#C2C9BD] text-[#191C19] placeholder:text-[#495348]/60 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#2E7D32] focus:border-[#2E7D32] transition-all"
+                      />
+                      {errors.subject && (
+                        <span className="text-red-500 text-[11px] block">{errors.subject.message}</span>
+                      )}
+                      <ValidationError prefix="Subjek" field="subject" errors={formspreeState.errors} className="text-red-500 text-[11px] block" />
+                    </div>
+                  </div>
+
+                  {/* Message */}
+                  <div className="space-y-1.5">
+                    <label htmlFor="message" className="font-bold text-[#191C19] block font-heading">
+                      Isi Pesan / Keterangan <span className="text-red-500">*</span>
+                    </label>
+                    <textarea
+                      id="message"
+                      rows={4}
+                      {...register('message')}
+                      placeholder="Tuliskan rincian pesan atau pertanyaan Anda secara lengkap..."
+                      className="w-full px-4 py-2.5 bg-[#F1F5F1]/50 rounded-xl border border-[#C2C9BD] text-[#191C19] placeholder:text-[#495348]/60 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#2E7D32] focus:border-[#2E7D32] transition-all"
+                    />
+                    {errors.message && (
+                      <span className="text-red-500 text-[11px] block">{errors.message.message}</span>
+                    )}
+                    <ValidationError prefix="Pesan" field="message" errors={formspreeState.errors} className="text-red-500 text-[11px] block" />
+                  </div>
+
+                  {/* Global Formspree error fallback */}
+                  <ValidationError errors={formspreeState.errors} className="text-red-600 text-xs bg-red-50 border border-red-200 p-2.5 rounded-lg" />
+
+                  <div className="pt-3">
+                    <button
+                      type="submit"
+                      disabled={isSending}
+                      className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full bg-[#2E7D32] hover:bg-[#1B5E20] active:scale-[0.98] text-white text-xs font-bold font-heading transition-all duration-150 disabled:opacity-60 shadow-md cursor-pointer disabled:cursor-not-allowed"
+                    >
+                      {isSending ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          <span>Mengirim Pesan...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Send className="w-4 h-4" />
+                          <span>Kirim Pesan Sekarang</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </form>
+              </>
+            )}
           </div>
 
         </div>
@@ -233,3 +305,4 @@ export default function KontakPage() {
     </div>
   );
 }
+
